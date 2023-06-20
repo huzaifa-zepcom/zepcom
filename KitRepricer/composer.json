@@ -1,0 +1,24 @@
+{
+  "name": "kit/kit-auto-price-update",
+  "description": "Geizhals pricelist-Update",
+  "version": "2.4.2",
+  "type": "shopware-platform-plugin",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "KIT"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "KitAutoPriceUpdate\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "KitAutoPriceUpdate\\KitAutoPriceUpdate",
+    "label": {
+      "de-DE": "KIT Repricer Plugin",
+      "en-GB": "KIT Repricer Plugin"
+    }
+  }
+}

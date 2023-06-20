@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="https://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="NetzBirthdayReminder\Command\BirthdayReminderCommand">
+            <tag name="console.command" />
+            <argument type="service" id="Doctrine\DBAL\Connection" />
+            <argument type="service" id="customer.repository" />
+            <argument type="service" id="Shopware\Core\Framework\Adapter\Twig\StringTemplateRenderer" />
+            <argument type="service" id="Shopware\Core\Content\Mail\Service\MailFactory" />
+            <argument type="service" id="Shopware\Core\Content\Mail\Service\MailSender" />
+            <argument type="service" id="Shopware\Core\Framework\Validation\DataValidator" />
+            <argument type="service" id="Shopware\Core\System\SalesChannel\SalesChannelDefinition" />
+            <argument type="service" id="Shopware\Core\Content\Media\Pathname\UrlGeneratorInterface" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <argument type="service" id="service_container" />
+        </service>
+
+    </services>
+</container>

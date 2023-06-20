@@ -1,0 +1,24 @@
+{
+  "name": "kit/kit-rma-plugin",
+  "description": "KIT RMA Plugin",
+  "version": "4.3.0",
+  "type": "shopware-platform-plugin",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "KIT"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "KitRma\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "KitRma\\KitRma",
+    "label": {
+      "de-DE": "KIT RMA Plugin",
+      "en-GB": "KIT RMA Plugin"
+    }
+  }
+}

@@ -1,0 +1,167 @@
+<!doctype html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+
+<title>&nbsp;</title>
+<style>
+    body, table, td {
+        font-family: Tahoma, Helvetica, sans-serif !important;
+    }
+    body p, ul, span, table.Responsive.table td {
+        font-size: 12px!important;
+        color: #474747;
+    }
+    a {
+        text-decoration: none;
+        font-size: 12px;
+    }
+    a.link {
+        color: #0bb9d9!important;
+    }
+    a.button {
+        color: #474747 !important;
+    }
+    h2 {
+        line-height: 34px;
+    }
+    .rechtstext p {
+        font-size: 10px!important;
+    }
+    table[class=Responsive] {
+        width: 600px;
+    }
+    table.Responsive.table td {
+        border-bottom: 0px solid;
+    }
+    tr.first-td-product {
+        /* border-bottom: 2px solid #f4f4f4;*/
+
+    }
+    hr {
+        background-color: #f4f4f4;
+        border: 0px solid;
+        border-bottom: 1px solid #f4f4f4;
+    }
+    .table-border {
+        border-bottom: 1px solid #f4f4f4!important;
+    }
+    /* Client-specific Styles and Fixes */
+
+    #outlook a {
+        padding: 0;
+    }
+    /* Force Outlook to provide a "view in browser" menu link. */
+
+    body {
+        width: 100% !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        margin: 0;
+        padding: 0;
+        line-height: 100% !important;
+    }
+
+    /*TABLET STYLES*/
+
+
+
+
+    @media only screen and (max-width: 676px) {
+        .footer-section-right {
+            width: 50% !important;
+            text-align: left !important;
+        }
+    }
+
+    @media only screen and (max-width: 479px) {
+        table[class=Responsive] {
+            width: 100% !important;
+        }
+    }
+
+    /*MOBILE STYLES*/
+
+    @media only screen and (max-width: 479px) {
+        table[class=Responsive] {
+            width: 100% !important;
+        }
+    }
+</style>
+
+<body>
+<table width="100%" bgcolor="#F7F7F7" cellspacing="0" id="backgroundTable" align="center" border="0" style="background-color: #f4f4f4;" margin="0 auto">
+    <tr>
+        <td align="center"><table width="600" class="Responsive" cellspacing="0" style="color:#484848; background-color: #0bb9d9;">
+                <tr>
+
+                    <!--Header mit Logo-->
+
+                    <td style="padding: 15px;"><img alt="Logo" src="https://www.klarsicht-it.de/media/fc/56/6c/1613983792/badge-mail.png"></td>
+                </tr>
+            </table></td>
+    </tr>
+    <tr>
+        <td align="center" width="600">
+            <table width="600" class="Responsive" cellspacing="0" style="font-family: 'Tahoma' !important; color:#484848; background-color: white; border: 20px solid white; margin: 0 auto;">
+                <tr>
+                    <td>
+                        <h2 style="font-weight: bold; color: #484848; font-size: 20px; text-align: center;">
+                            Ihre Reklamation / R&uuml;cknahmeanfrage</h2>
+                        <p style="font-size: 12px">Sehr geehrte/r {{ rma.salutation }}
+                            {{ rma.customer_name }},<br /><br />
+                            vielen Dank, dass Sie den KLARSICHT IT Kundenservice kontaktiert haben.<br />
+                            Zu Ihrer Anfrage liegt eine neue Antwort vor. Bitte öffnen Sie Ihren bestehenden
+                            Vorgang unter folgendem Link:
+                        <div style="text-align: center">
+                            <a href="{{ rma.link }}" class="button" style="padding: 5px 10px; border: 3px solid #474747;"><b>&nbsp;Zur Reklamationsoberfläche&nbsp;</b></a></div>
+                        <p style="font-size: 12px">Unsere Antwort bezieht sich auf Ihre Anfrage / Reklamation mit der Vorgangsnummer
+                            #{{ rma.rma_number }} und Ihre Bestellnummer {{ rma.ordernumber }}.
+                            Sollten Sie R&uuml;ckfragen
+                            zu Ihrer Anfrage haben, k&ouml;nnen Sie uns diese direkt &uuml;ber den oben genannten Link zukommen lassen.
+                            zukommen lassen. &nbsp;<br /> <br/>
+                            Mit freundlichen Grüßen,<br />
+                            Ihr KLARSICHT IT RMA Team</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center" width="600">
+            <table width="600" class="Responsive" cellspacing="0" style="letter-spacing: 0.2px; margin:0 auto; font-family: 'Tahoma' !important; background-color: #0bb9d9; border: 20px solid #0bb9d9;">
+                <tr>
+                    <td>
+                        <table border="0px solid rbga(0,0,0,0)" class="footer-table" width="100%" style="font-size: 12px; color:#484848; letter-spacing: 0.2px; color: white;">
+                            <tr>
+                                <td class="footer-section-left"> KLARSICHT IT GmbH<br/>
+                                    Luisenthaler Str. 1<br/>
+                                    61184 Karben <br/>
+                                    <br/>
+                                    <br />
+                                    <b>Tel.:</b>+49 (6039) 80393-00<br/>
+                                    <b>Fax:</b>+49 (6039) 80393-90<br/>
+                                    <b>E-Mail:</b> service@klarsicht-it.de
+                                </td>
+                                <td style="text-align: right;">
+                                    <b>Steuernummer:</b> DE281057543<br/>
+                                    Finanzamt Gießen<br/>
+                                    HRB 96156 AG Frankfurt am Main<br/>
+                                    <b>Geschäftsführer:</b> Björn May<br/>
+                                    <br/>
+                                    Sparkasse Oberhessen<br/>
+                                    <b>IBAN:</b> DE51 5185 0079 0027 0912 53<br/>
+                                    <b>BIC:</b> HELADEF1FRI<br/>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="https://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="Config3d\Controller\Config3dController" public="true">
+            <argument type="service" id="Shopware\Storefront\Page\Product\ProductPageLoader"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <call method="setTwig">
+                <argument type="service" id="twig"/>
+            </call>
+            <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService"/>
+        </service>
+
+        <service id="Config3d\Subscriber\Config3dSubscriber">
+            <tag name="kernel.event_subscriber"/>
+            <argument type="service" id="request_stack"/>
+            <argument type="service" id="config3d_plugin.repository"/>
+        </service>
+
+        <service id="Config3d\Content\Config3dPluginDefinition">
+            <tag name="shopware.entity.definition"/>
+        </service>
+
+        <service id="Config3d\Service\Config3dPluginService">
+            <argument type="service" id="config3d_plugin.repository"/>
+            <argument type="service" id="order_line_item.repository"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="logger"/>
+        </service>
+
+        <service id="Config3d\Command\SyncPlugin3dConfigCommand">
+            <tag name="console.command"/>
+            <argument type="service" id="Config3d\Service\Config3dPluginService"/>
+        </service>
+
+        <service id="Config3d\Command\CleanPlugin3dConfigCommand">
+            <tag name="console.command"/>
+            <argument type="service" id="Config3d\Service\Config3dPluginService"/>
+        </service>
+
+        <service id="Config3d\Service\Config3dProcessor">
+            <tag name="shopware.cart.processor"/>
+            <argument type="service" id="request_stack"/>
+        </service>
+
+    </services>
+</container>

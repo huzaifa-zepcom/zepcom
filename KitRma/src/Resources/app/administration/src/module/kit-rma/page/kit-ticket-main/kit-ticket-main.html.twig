@@ -1,0 +1,247 @@
+{% block kit_rma %}
+    <sw-page class="sw-settings-index" :showSmartBar="false">
+
+        {% block kit_rma_main %}
+            <template #content>
+                <sw-card-view>
+                    {% block kit_rma_main_tabs %}
+                        <sw-tabs class="sw-settings__tabs"
+                                 :isVertical="true"
+                                 :small="false"
+                                 defaultItem="ticket">
+                            <template #default="{ active }">
+                                {% block kit_rma_main_tab_list %}
+                                    <sw-tabs-item class="sw-settings__tab-list"
+                                                  name="ticket"
+                                                  :activeTab="active"
+                                                  :title="$tc('kit-rma.modules.ticket.title')">
+                                        {{ $tc('kit-rma.modules.ticket.title') }}
+                                    </sw-tabs-item>
+                                {% endblock %}
+
+                                {% block kit_rma_main_tab_cases %}
+                                    <sw-tabs-item class="sw-settings__tab-cases"
+                                                  name="cases"
+                                                  :activeTab="active"
+                                                  :title="$tc('kit-rma.modules.case.title')">
+                                        {{ $tc('kit-rma.modules.case.title') }}
+                                    </sw-tabs-item>
+                                {% endblock %}
+
+                                {% block kit_rma_main_tab_text %}
+                                    <sw-tabs-item class="sw-settings__tab-text"
+                                                  name="texts"
+                                                  :activeTab="active"
+                                                  :title="$tc('kit-rma.modules.text.title')">
+                                        {{ $tc('kit-rma.modules.text.title') }}
+                                    </sw-tabs-item>
+                                {% endblock %}
+
+                                {% block kit_rma_main_tab_status %}
+                                    <sw-tabs-item class="sw-settings__tab-status"
+                                                  name="status"
+                                                  :activeTab="active"
+                                                  :title="$tc('kit-rma.modules.status.title')">
+                                        {{ $tc('kit-rma.modules.status.title') }}
+                                    </sw-tabs-item>
+                                {% endblock %}
+
+                                {% block kit_rma_main_tab_address %}
+                                    <sw-tabs-item class="sw-settings__tab-address"
+                                                  name="address"
+                                                  :activeTab="active"
+                                                  :title="$tc('kit-rma.modules.address.title')">
+                                        {{ $tc('kit-rma.modules.address.title') }}
+                                    </sw-tabs-item>
+                                {% endblock %}
+
+                            </template>
+
+                            <template #content="{ active }">
+                                {% block kit_rma_main_card %}
+                                    {% block kit_rma_main_header %}
+                                        <h1 class="sw-settings__content-header">{{ $tc('kit-rma.general.moduleTitle') }}</h1>
+                                    {% endblock %}
+
+                                    <sw-card class="sw-settings__card">
+                                        {% block kit_rma_main_card_content %}
+                                            <slot v-for="(settingsItems, settingsGroup) in rmaModules"
+                                                  :name="settingsGroup">
+                                                <div v-show="active === settingsGroup"
+                                                     class="sw-settings__content-grid"
+                                                     :id="`sw-settings__content-grid-${settingsGroup}`"
+                                                >
+                                                    <sw-settings-item v-for="settingsItem in settingsItems"
+                                                                      :key="settingsItem.name"
+                                                                      :label="$tc(settingsItem.label)"
+                                                                      :to="{ name: settingsItem.to }"
+                                                                      :id="settingsItem.name">
+                                                        <template #icon>
+                                                            <sw-icon :name="settingsItem.icon"></sw-icon>
+                                                        </template>
+                                                    </sw-settings-item>
+                                                </div>
+                                            </slot>
+                                        {% endblock %}
+                                    </sw-card>
+                                {% endblock %}
+                            </template>
+                        </sw-tabs>
+                    {% endblock %}
+                </sw-card-view>
+            </template>
+        {% endblock %}
+    </sw-page>
+{% endblock %}
+
+{#
+
+<sw-page>
+    <template slot="smart-bar-header">
+        <h2>{{ $tc('kit-rma.modules.moduleTitle') }}</h2>
+    </template>
+
+    <template slot="content">
+        <sw-card-view>
+            <sw-tabs defaultItem="list">
+
+                <sw-tabs-item :native="true" name="list" :activeTab="active">
+                    {{ $tc('kit-rma.modules.moduleTitle') }}
+                </sw-tabs-item>
+
+                <sw-tabs-item :native="true" name="case" :activeTab="active">
+                    {{ $tc('kit-rma.modules.caseTitle') }}
+                </sw-tabs-item>
+
+                <sw-tabs-item :native="true" name="text" :activeTab="active">
+                    {{ $tc('kit-rma.modules.textTitle') }}
+                </sw-tabs-item>
+
+                <sw-tabs-item :native="true" name="status" :activeTab="active">
+                    {{ $tc('kit-rma.modules.statusTitle') }}
+                </sw-tabs-item>
+
+                <sw-tabs-item :native="true" name="addressbook" :activeTab="active">
+                    {{ $tc('kit-rma.modules.addressbookTitle') }}
+                </sw-tabs-item>
+
+                <template #content="{ active }">
+                    <sw-loader v-if="isLoading"></sw-loader>
+                    <div v-if="active==='list'">
+
+                        <sw-button :routerLink="{ name: 'kit.rma.create' }" variant="primary">
+                            Create Ticket
+                        </sw-button>
+
+                        <sw-entity-listing v-if="tickets"
+                                           :items="tickets"
+                                           :columns="ticketColumns"
+                                           :repository="repository"
+                                           detailRoute="kit.rma.view"
+                                           :showSelection="false"
+                                           :isLoading="isLoading">
+                        </sw-entity-listing>
+                        <sw-empty-state v-if="!isLoading && !tickets"
+                                        :title="$tc('kit-rma.modules.messageEmpty')">
+                        </sw-empty-state>
+                    </div>
+                    <div v-if="active === 'status'">
+
+                        <sw-button :routerLink="{ name: 'kit.rma.status' }" variant="primary">
+                            Create Status
+                        </sw-button>
+
+                        <sw-entity-listing v-if="statuses"
+                                           :items="statuses"
+                                           :columns="statusColumns"
+                                           :repository="statusRepository"
+                                           detailRoute="kit.rma.status.view"
+                                           :showSelection="false"
+                                           :isLoading="isLoading">
+                        </sw-entity-listing>
+                        <sw-empty-state v-if="!isLoading && !statuses"
+                                        :title="$tc('kit-rma.modules.messageEmpty')">
+                        </sw-empty-state>
+                    </div>
+                    <div v-if="active === 'case'">
+                        <sw-button :routerLink="{ name: 'kit.rma.cases' }" variant="primary">
+                            Create Case
+                        </sw-button>
+
+                        <sw-entity-listing v-if="cases"
+                                           :items="cases"
+                                           :columns="caseColumns"
+                                           :repository="caseRepository"
+                                           detailRoute="kit.rma.cases.view"
+                                           :showSelection="false"
+                                           :isLoading="isLoading">
+                        </sw-entity-listing>
+                        <sw-empty-state v-if="!isLoading && !cases"
+                                        :title="$tc('kit-rma.modules.messageEmpty')">
+                        </sw-empty-state>
+
+                    </div>
+                    <div v-if="active === 'text'">
+                        <sw-button :routerLink="{ name: 'kit.rma.texts' }" variant="primary">
+                            Create Text Snippet
+                        </sw-button>
+
+                        <sw-entity-listing v-if="textSnippets"
+                                           :items="textSnippets"
+                                           :columns="snippetColumns"
+                                           :repository="textRepository"
+                                           detailRoute="kit.rma.texts.view"
+                                           :showSelection="false"
+                                           :isLoading="isLoading">
+                        </sw-entity-listing>
+                        <sw-empty-state v-if="!isLoading && !textSnippets"
+                                        :title="$tc('kit-rma.modules.messageEmpty')">
+                        </sw-empty-state>
+                    </div>
+                    <div v-if="active === 'addressbook'">
+                        <sw-button :routerLink="{ name: 'kit.rma.address' }" variant="primary">
+                            Create Address
+                        </sw-button>
+
+                        <sw-entity-listing v-if="addresses"
+                                           :items="addresses"
+                                           :columns="addressColumns"
+                                           :repository="addressRepository"
+                                           detailRoute="kit.rma.address.view"
+                                           :showSelection="false"
+                                           :isLoading="isLoading">
+                        </sw-entity-listing>
+                        <sw-empty-state v-if="!isLoading && !addresses"
+                                        :title="$tc('kit-rma.modules.messageEmpty')">
+                        </sw-empty-state>
+                    </div>
+                </template>
+            </sw-tabs>
+
+            <template #sidebar>
+                <sw-sidebar class="sw-customer-list__sidebar">
+                    {% block kit_rma_ticket_sidebar_refresh %}
+                        <sw-sidebar-item
+                                icon="default-arrow-360-left"
+                                :title="$tc('sw-product.list.titleSidebarItemRefresh')"
+                                @click="onRefresh">
+                        </sw-sidebar-item>
+                    {% endblock %}
+
+                    {% block kit_rma_ticket_sidebar_filter %}
+                        <sw-sidebar-item icon="default-action-filter"
+                                         :title="$tc('kit-rma.modules.kitMainMenuDescription')">
+
+                            <sw-description-list>
+                                <dt>{{ $tc('kit-rma.sidebar.kitFiltersLabel') }}</dt>
+                            </sw-description-list>
+
+                        </sw-sidebar-item>
+                    {% endblock %}
+                </sw-sidebar>
+            </template>
+
+        </sw-card-view>
+    </template>
+</sw-page>
+#}

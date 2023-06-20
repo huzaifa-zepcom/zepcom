@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="KitRma\Helper\FileUploader">
+            <argument id="Shopware\Core\Content\Media\MediaService" type="service" />
+            <argument id="Shopware\Core\Content\Media\File\FileSaver" type="service" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+        </service>
+
+        <service id="KitRma\Controller\RmaController">
+            <call method="setContainer">
+                <argument id="service_container" type="service" />
+            </call>
+            <tag name="controller.service_arguments" />
+            <argument type="service" id="KitRma\Helper\FileUploader" />
+            <argument type="service" id="Shopware\Core\Content\Mail\Service\MailService" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <argument type="service" id="KitFilterset\Helper\KitFiltersetHelper" on-invalid="ignore" />
+            <argument type="service" id="Shopware\Storefront\Page\Account\Login\AccountLoginPageLoader" />
+            <argument type="service" id="Shopware\Storefront\Page\Account\Overview\AccountOverviewPageLoader" />
+            <argument type="service" id="Shopware\Core\Checkout\Document\FileGenerator\PdfGenerator" />
+            <argument type="service" id="Shopware\Core\Content\Media\MediaService" />
+            <argument type="service" id="Doctrine\DBAL\Connection" />
+        </service>
+
+        <service id="KitRma\Controller\RmaApiController">
+            <call method="setContainer">
+                <argument id="service_container" type="service" />
+            </call>
+            <tag name="controller.service_arguments" />
+            <argument type="service" id="KitRma\Helper\FileUploader" />
+            <argument type="service" id="Shopware\Core\Content\Mail\Service\MailService" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <argument type="service" id="KitFilterset\Helper\KitFiltersetHelper" on-invalid="ignore" />
+            <argument type="service" id="Shopware\Core\Checkout\Document\FileGenerator\PdfGenerator" />
+            <argument type="service" id="Shopware\Core\Content\Media\MediaService" />
+            <argument type="service" id="Doctrine\DBAL\Connection" />
+        </service>
+
+        <service id="KitRma\Content\RmaTicketHistory\RmaTicketHistoryDefinition">
+            <tag name="shopware.entity.definition" />
+        </service>
+
+        <service id="KitRma\Content\RmaTicket\RmaTicketDefinition">
+            <tag name="shopware.entity.definition" />
+        </service>
+
+        <service id="KitRma\Content\RmaText\RmaTextDefinition">
+            <tag name="shopware.entity.definition" />
+        </service>
+
+        <service id="KitRma\Content\RmaStatus\RmaStatusDefinition">
+            <tag name="shopware.entity.definition" />
+        </service>
+
+        <service id="KitRma\Content\RmaCase\RmaCaseDefinition">
+            <tag name="shopware.entity.definition" />
+        </service>
+
+        <service id="KitRma\Content\RmaAddressBook\RmaAddressBookDefinition">
+            <tag name="shopware.entity.definition" />
+        </service>
+
+		<service id="KitRma\Subscriber\Frontend">
+            <argument id="Shopware\Core\System\SystemConfig\SystemConfigService" type="service" />
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <tag name="kernel.event_subscriber" />
+        </service>
+    </services>
+</container>

@@ -1,0 +1,40 @@
+{% sw_extends '@SwagB2bPlatform/storefront/frontend/b2border/grid/_grid-row.html.twig' %}
+
+{% block b2b_order_grid_row_cells_actions %}
+    {% if b2b_acl_check('b2border', 'detail') or b2b_acl_check('b2borderorderlist', 'createNewOrderList') %}
+        <td
+                class="col-actions is--align-center"
+                data-label="{{ "b2b.ActionsLabel"|trans }}"
+        >
+            <button
+                    class="btn is--small btn--edit ajax-panel-link b2b-highlight {{ b2b_acl('b2border', 'detail') }}"
+                    type="button"
+                    title="{{ "b2b.OrderDetails"|trans }}"
+                    data-target="order-detail"
+                    data-href="{{ path('frontend.b2b.b2border.detail', { orderContextId: row.id.getValue }) }}"
+            >
+                {% sw_icon 'pencil-brush' %}
+            </button>
+
+            <button
+                    class="btn is--small component-action-create ajax-panel-link {{ b2b_acl('b2borderorderlist', 'createNewOrderList') }}"
+                    type="button"
+                    title="{{ "b2b.CreateOrderListFromOrder"|trans }}"
+                    data-target="orderlist-detail"
+                    data-href="{{ path("frontend.b2b.b2borderorderlist.createNewOrderList", { id: row.id.getValue }) }}"
+            >
+                {% sw_icon 'list' %}
+            </button>
+
+            {% if shopware.config.KitRma.config.active %}
+                <button onclick="window.open('/rma/search?ordernumber=' + {{ row.orderNumber }}, '_blank');"
+                        class="btn is--small"
+                        type="button"
+                        title="{{ "kitRma.selectProductReturn"|trans }}"
+                >
+                    {% sw_icon 'external' %}
+                </button>
+            {% endif %}
+        </td>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,25 @@
+{% sw_extends "@Storefront/storefront/page/product-detail/index.html.twig" %}
+
+{% block page_product_detail_media %}
+    <div class="col-lg-7 product-detail-media">
+        {% set product = page.product %}
+        <script defer="defer" src="{{ config('Config3d.config.baseUrl') }}/modeller/js/chunk-vendors.js"></script>
+        <script defer="defer" src="{{ config('Config3d.config.baseUrl') }}/modeller/js/app.js"></script>
+        <link href="{{ config('Config3d.config.baseUrl') }}/modeller/css/chunk-vendors.css" rel="stylesheet"/>
+        <link href="{{ config('Config3d.config.baseUrl') }}/modeller/css/app.css" rel="stylesheet"/>
+
+        {% if lineItem and lineItem.payload.plugin3d_config is defined %}
+            <div id="m3d" config="{{ lineItem.payload.plugin3d_config }}"
+                 primaryColor="{{ config('Config3d.config.primaryColor') }}"
+                 secondaryColor="{{ config('Config3d.config.secondaryColor') }}"
+            >
+            </div>
+        {% else %}
+            <div id="m3d" configURL="{{ product.customFields.customization_config_url }}"
+                 primaryColor="{{ config('Config3d.config.primaryColor') }}"
+                 secondaryColor="{{ config('Config3d.config.secondaryColor') }}"
+            >
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

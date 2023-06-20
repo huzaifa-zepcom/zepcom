@@ -1,0 +1,13 @@
+{% sw_extends '@Storefront/storefront/page/account/order-history/order-item.html.twig' %}
+
+{% block page_account_order_item_context_menu_reorder_form_button %}
+    {{ parent() }}
+    {% if order.invoices is defined %}
+        {% for key,invoice in order.invoices %}
+            <a href="{{ path('frontend.kit.invoice', {hash: invoice.id}) }}"
+               class="order-table-header-context-menu-content-link"
+               target="_blank"
+               type="button">{{ "kitInvoice.viewInvoice"|trans }} {% if order.invoices|length > 1 %}{{ key + 1 }}{% endif %}</a>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

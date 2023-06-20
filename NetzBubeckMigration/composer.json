@@ -1,0 +1,18 @@
+{
+  "name": "netz/bubeck-migration",
+  "description": "Migration Helper for Bubeck shop",
+  "type": "shopware-platform-plugin",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "NetzBubeckMigration\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "NetzBubeckMigration\\NetzBubeckMigration",
+    "label": {
+      "de-DE": "Bubeck Migration Helper",
+      "en-GB": "Bubeck Migration Helper"
+    }
+  }
+}

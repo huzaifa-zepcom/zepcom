@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <card>
+        <title>Basic Configuration</title>
+        <title lang="de-DE">Grundeinstellungen</title>
+
+        <input-field>
+            <name>apiKey</name>
+            <label>API Key</label>
+            <required>true</required>
+        </input-field>
+
+        <input-field type="url">
+            <name>baseUrl</name>
+            <label>Base Url</label>
+            <helpText>Common base URL for all endpoints and links</helpText>
+            <required>true</required>
+        </input-field>
+
+        <input-field type="int">
+            <name>deleteAfterDays</name>
+            <label>Delete saved data after X days</label>
+            <required>true</required>
+        </input-field>
+
+        <input-field type="colorpicker">
+            <name>primaryColor</name>
+            <label>Primary Color</label>
+            <required>true</required>
+        </input-field>
+
+        <input-field type="colorpicker">
+            <name>secondaryColor</name>
+            <label>Secondary Color</label>
+            <required>true</required>
+        </input-field>
+    </card>
+</config>

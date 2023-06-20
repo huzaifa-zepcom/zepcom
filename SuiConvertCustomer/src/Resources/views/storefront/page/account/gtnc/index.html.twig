@@ -1,0 +1,149 @@
+{% sw_extends '@Storefront/storefront/page/account/register/index.html.twig' %}
+
+{% block page_account_register_inner %}
+    {% block page_account_gtnc_main_content %}
+        <div class="card register-card gtnc-card">
+            <div class="card-body changeGuestToCustomerBody">
+                {% if not success %}
+                    {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+                        type: 'error',
+                        content: key|trans
+                    } %}
+                {% else %}
+                    {% if success and not email %}
+                        {% block page_account_gtnc_message_success_customer %}
+                            {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+                                type: 'success',
+                                content: "gtnc.success"|trans
+                            } %}
+                        {% endblock %}
+
+                        <div class="row">
+                            <div class="col-12">
+                                {{ "gtnc.login"|trans|sw_sanitize }}
+                            </div>
+                            <div class="col-12" style="padding-top: 10px;">
+                                <a href="{{ path('frontend.account.login') }}"
+                                   class="btn btn-primary">{{ "account.loginSubmit"|trans|sw_sanitize }}</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        {% block page_account_gtnc_header %}
+                            <div class="card-title">
+                                {{ "gtnc.cardHeadline"|trans|striptags }}
+                            </div>
+                        {% endblock %}
+
+                        {% block page_account_gtnc_form %}
+                            <form action="{{ path('frontend.sui.guest.register', { id: customerId, deepLinkCode: hash }) }}"
+                                  class="register-form" method="post"
+                                  data-form-csrf-handler="true">
+
+                                {% block page_account_gtnc_form_csrf %}
+                                    {{ sw_csrf('frontend.sui.guest.register') }}
+                                {% endblock %}
+
+                                {% if email %}
+                                    {% block page_account_gtnc_email_rec %}
+                                        {{ "gtnc.enterPasswordMessage"|trans({'%mail%': email}) }}
+                                        <br/><br/>
+                                        <input type="hidden" name="email" value="{{ email }}">
+                                        <input type="hidden" name="customerId" value="{{ customerId }}">
+                                        <input type="hidden" name="guestPass" value="1">
+                                    {% endblock %}
+                                {% endif %}
+
+                                {% block page_account_gtnc_personal %}
+                                    <div class="register-personal">
+                                        {% block page_account_gtnc_personal_fields %}
+                                            {% set formGroupPassword %}
+                                                {% block page_account_gtnc_personal_password %}
+                                                    <span class="js-form-field-toggle-guest-mode">
+                                                    {% block page_account_gtnc_personal_password_label %}
+                                                        <label class="form-label"
+                                                               for="personalPassword">
+                                                            {{ "account.personalPasswordLabel"|trans|sw_sanitize }}{{ "general.required"|trans|sw_sanitize }}
+                                                        </label>
+                                                    {% endblock %}
+
+                                                        {% block page_account_gtnc_personal_password_input %}
+                                                            <input type="password"
+                                                                   class="form-control{% if formViolations.getViolations('/password') is not empty %} is-invalid{% endif %}"
+                                                                   autocomplete="new-password"
+                                                                   id="personalPassword"
+                                                                   placeholder="{{ "account.personalPasswordPlaceholder"|trans|striptags }}"
+                                                                   name="password"
+                                                                   minlength="{{ config('core.loginRegistration.passwordMinLength') }}"
+                                                                   data-form-validation-equal="newPassword"
+                                                                    {% if config('core.loginRegistration.passwordMinLength') != 0 %}
+                                                                        data-form-validation-length="{{ config('core.loginRegistration.passwordMinLength') }}"
+                                                                        data-form-validation-length-message=" {{ "account.personalPasswordDescription"|trans({
+                                                                            '%minLength%': config('core.loginRegistration.passwordMinLength')
+                                                                        })|sw_sanitize }}"
+                                                                    {% endif %}
+                                                                   required="required">
+                                                        {% endblock %}
+
+                                                        {% block page_account_gtnc_personal_password_description %}
+                                                            {% if config('core.loginRegistration.passwordMinLength') != 0 %}
+                                                                <small class="form-text js-validation-message"
+                                                                       data-form-validation-length-text="true">
+                                                                {{ "account.personalPasswordDescription"|trans({
+                                                                    '%minLength%': config('core.loginRegistration.passwordMinLength')
+                                                                })|sw_sanitize }}
+                                                            </small>
+                                                            {% endif %}
+                                                        {% endblock %}
+
+                                                        {% block page_account_gtnc_personal_password_input_error %}
+                                                            {% if formViolations.getViolations('/password') is not empty %}
+                                                                {% sw_include '@Storefront/storefront/utilities/form-violation.html.twig' with {
+                                                                    violationPath: '/password'
+                                                                } %}
+                                                            {% endif %}
+                                                        {% endblock %}
+                                                </span>
+                                                {% endblock %}
+                                            {% endset %}
+
+                                            {% block page_account_gtnc_personal_account_fields %}
+                                                <div class="form-row">
+                                                    <div class="form-group col-4">
+                                                        {{ formGroupPassword }}
+                                                    </div>
+                                                </div>
+                                            {% endblock %}
+                                        {% endblock %}
+                                    </div>
+                                {% endblock %}
+
+                                {% block page_account_gtnc_captcha %}
+                                    {% sw_include '@Storefront/storefront/component/captcha/base.html.twig' with { 'captchas': config('core.basicInformation.activeCaptchas') } %}
+                                {% endblock %}
+
+                                {% block page_account_gtnc_privacy %}
+                                    {% sw_include '@Storefront/storefront/component/privacy-notice.html.twig' %}
+                                {% endblock %}
+
+                                {% block page_account_gtnc_required_fields %}
+                                    <p class="register-required-info">
+                                        {{ "general.requiredFields"|trans|sw_sanitize }}
+                                    </p>
+                                {% endblock %}
+
+                                {% block page_account_gtnc_submit %}
+                                    <div class="register-submit">
+                                        <button type="submit"
+                                                class="btn btn-primary btn-lg">
+                                            {{ "account.registerSubmit"|trans|sw_sanitize }}
+                                        </button>
+                                    </div>
+                                {% endblock %}
+                            </form>
+                        {% endblock %}
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}

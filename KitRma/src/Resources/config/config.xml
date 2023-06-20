@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/master/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>KitRma Settings</title>
+        <title lang="de-DE">KitRma Einstellungen</title>
+
+        <input-field type="bool">
+            <name>active</name>
+            <label>Active</label>
+            <label lang="de-DE">Aktiviert</label>
+        </input-field>
+
+		<input-field type="text">
+            <name>domain</name>
+            <label>Old subdomain name</label>
+            <defaultValue>old</defaultValue>
+        </input-field>
+
+        <input-field>
+            <name>maxUploadSize</name>
+            <label>Max. Upload Size (MB)</label>
+            <helpText>Max size for document upload</helpText>
+            <defaultValue>5</defaultValue>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Ticket Settings</title>
+        <title lang="de-DE">Ticket Einstellungen</title>
+
+        <component name="sw-entity-single-select">
+            <name>ticketCreationText</name>
+            <entity>rma_text</entity>
+            <label>Choose the text to be shown after ticket creation</label>
+        </component>
+
+        <component name="sw-entity-single-select">
+            <name>ticketCreationStatus</name>
+            <entity>rma_status</entity>
+            <label>Choose the status to set when ticket is created</label>
+        </component>
+
+        <component name="sw-entity-single-select">
+            <name>customerResponseStatus</name>
+            <entity>rma_status</entity>
+            <label>Choose the status to set when customer responds</label>
+        </component>
+    </card>
+</config>

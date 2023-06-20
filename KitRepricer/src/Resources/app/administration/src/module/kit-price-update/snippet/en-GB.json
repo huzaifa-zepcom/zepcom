@@ -1,0 +1,52 @@
+{
+  "kit-price-update": {
+    "general": {
+      "mainMenuItemGeneral": "KIT Repricer",
+      "required": "{name} is required",
+      "textDeleteConfirm": "Do you really want to delete this rule \"{name}\" ?",
+      "modalTitleDelete": "Delete Rule",
+      "showLogButton": "Logs",
+      "searchProductNumber": "Search product number ..."
+    },
+    "supplier": {
+      "mainMenuItemList": "Suppliers"
+    },
+    "rules": {
+      "generalRule": "Rule",
+      "campaign": "Campaign",
+      "minimumPrice": "Min. Price",
+      "maximumPrice": "Max. Price",
+      "priority": "Priority",
+      "optimizeForPosition": "Optimize for position",
+      "minimumMargin": "Min. Margin",
+      "comparitiveDifference": "Comparative difference",
+      "distanceToCompetitor": "Distance to n.H",
+      "enable": "Enable",
+      "type": "Sink / Raise",
+      "save": "Save",
+      "cancel": "Cancel",
+      "adjustIfInStock": "Only adjust prices if the item is in stock.",
+      "adjustWithCompetitorInventory": "Only adjust prices up to a competitor with inventory.",
+      "productSelection": "Enter product numbers",
+      "productName": "Product name contains",
+      "productDesc": "Product description contains",
+      "productSelectionPlaceholder": "Enter comma separated (,) product numbers",
+      "excluded": "Excluded",
+      "updateRegularPrice": "Adjust normal price too"
+    },
+    "logs": {
+      "product": "Product",
+      "productNumber": "Product Number",
+      "cheapestDealer": "Best Competitor",
+      "originalPrice": "Original Price",
+      "optimizedPrice": "Optimized Price",
+      "relatedTo": "Related to",
+      "minPrice": "Minimum Price",
+      "newPlace": "New place",
+      "margin": "Margin",
+      "action": "Action",
+      "rulename": "Rule",
+      "date": "Date"
+    }
+  }
+}

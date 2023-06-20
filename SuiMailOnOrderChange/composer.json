@@ -1,0 +1,49 @@
+{
+  "name": "sui/mail-on-order-change",
+  "description": "SuiFactum - mail on order change",
+  "version": "1.0.3",
+  "type": "shopware-platform-plugin",
+  "license": "proprietary",
+  "keywords": [
+    "suifactum",
+    "order",
+    "email",
+    "preview"
+  ],
+  "authors": [
+    {
+      "name": "SuiFactum",
+      "role": "Owner",
+      "homepage": "https://www.suifactum.de/"
+    }
+  ],
+  "require": {
+    "shopware/core": "6.4.*",
+    "shopware/storefront": "6.4.*",
+    "shopware/administration": "6.4.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "SuiMailOnOrderChange\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "SuiMailOnOrderChange\\SuiMailOnOrderChange",
+    "label": {
+      "de-DE": "Mail bei Status Wechsel",
+      "en-GB": "Mail on status change"
+    },
+    "description": {
+      "de-DE": "Dieses Plugin fügt die aus Shopware 5 bekannte Funktion hinzu, bei einem Status Wechsel einer Bestellung eine Vorschau des E-Mail Templates zu erhalten, welches versendet werden wird.\n\nDarüber hinaus kann man die E-Mails in Echtzeit bearbeiten und anpassen, sollte das notwendig sein. Dies kann über einen What You See Is What You Get Editor, oder direkt mit HTML gemacht werden.\n\nFür das Plugin ist keinerlei Konfiguration notwendig. Einfach das Plugin installieren und los legen.",
+      "en-GB": "This Plugin adds the function known from shopware 5 to receive a preview of the regarding e-mail template that is going to be sent in the event of a status change in an order.\n\nAdditional to that, you can edit the mail or even the subject in realtime, before it is being sent to the customer. This can be done with an 'What You See Is What You Get' editor or, if preferred, directly via HTML.\n\nYou will not need any configuration after the plugin is being installed. You can start right away."
+    },
+    "manufacturerLink": {
+      "en-GB": "https://www.suifactum.de/",
+      "de-DE": "https://www.suifactum.de/"
+    },
+    "supportLink": {
+      "de-DE": "support@suifactum.de",
+      "en-GB": "support@suifactum.de"
+    }
+  }
+}

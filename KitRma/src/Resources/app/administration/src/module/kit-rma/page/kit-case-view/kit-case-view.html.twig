@@ -1,0 +1,55 @@
+{% block kit_status %}
+    <sw-page class="kit-rma--modules-case-detail">
+        <template slot="smart-bar-actions">
+            <sw-button :routerLink="{ name: 'kit.rma.case_list' }">
+                {{ $tc('kit-rma.general.viewListButton') }}
+            </sw-button>
+
+            <sw-button-process
+                    :isLoading="isLoading"
+                    :processSuccess="processSuccess"
+                    variant="primary"
+                    @process-finish="saveFinish"
+                    @click="onClickSave">
+                {{ $tc('kit-rma.general.saveButtonText') }}
+            </sw-button-process>
+        </template>
+
+        <template slot="content">
+            <sw-card-view>
+
+                <sw-card v-if="businessCase" :isLoading="isLoading">
+
+                    <sw-field :label="$tc('kit-rma.modules.case.name')"
+                              v-model="businessCase.name"></sw-field>
+
+                    <sw-button-group>
+                        <sw-button :disabled="false"
+                                   @click="addField"
+                                   :isLoading="false">
+                            <sw-icon name="default-basic-plus-circle"></sw-icon>
+                        </sw-button>
+                        <sw-button :disabled="fields.length === 0"
+                                   @click="removeFields"
+                                   title="Remove last entry"
+                                   :isLoading="false">
+                            <sw-icon name="default-basic-minus-circle"></sw-icon>
+                        </sw-button>
+                    </sw-button-group>
+
+                </sw-card>
+                <sw-card v-if="fields.length">
+                    <template v-for="field in fields">
+                        <kit-case-freetext-field @field-changed="updateFields"
+                                                 :key="field.id"
+                                                 :id="'freetext-' + field.id"
+                                                 @field-removed="removeFields"
+                                                 :field="field"
+                                                 :index="field.id">
+                        </kit-case-freetext-field>
+                    </template>
+                </sw-card>
+            </sw-card-view>
+        </template>
+    </sw-page>
+{% endblock %}

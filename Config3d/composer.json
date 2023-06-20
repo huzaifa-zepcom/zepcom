@@ -1,0 +1,40 @@
+{
+  "name": "config3d/das3dding",
+  "description": "Plugin 3D Integration with Shopware 6",
+  "type": "shopware-platform-plugin",
+  "version": "1.1.13",
+  "authors": [
+    {
+      "name": "Config3d"
+    }
+  ],
+  "require": {
+    "shopware/core": "~6.4"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Config3d\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "Config3d\\Config3d",
+    "copyright": "",
+    "label": {
+      "de-DE": "Config3d Plugin",
+      "en-GB": "Config3d Plugin"
+    },
+    "description": {
+      "de-DE": "Plugin 3D Integration with Shopware 6",
+      "en-GB": "Plugin 3D Integration with Shopware 6"
+    },
+    "manufacturerLink": {
+      "de-DE": "https://acme.org",
+      "en-GB": "https://acme.org"
+    },
+    "supportLink": {
+      "de-DE": "https://acme.org",
+      "en-GB": "https://acme.org"
+    }
+  }
+}

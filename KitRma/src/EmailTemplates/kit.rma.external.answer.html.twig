@@ -1,0 +1,181 @@
+<html>
+
+<head>
+    <title>&nbsp;</title>
+    <!--Schrift-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&display=swap"
+          rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Cairo', Helvetica, 'Roboto', sans-serif !important;
+        }
+
+        p,
+        table td,
+        body {
+            font-family: 'Cairo' !important;
+        }
+
+        /*Farbe Links*/
+
+        a.button,
+        .button,
+        table .button {
+            background-color: #0bb9d9 !important;
+            padding: 5px !important;
+            font-weight: 700;
+            text-align: center !important;
+            text-decoration: none !important;
+            color: white;
+        }
+        .widerrufsrecht a,
+        .projektkunde a {
+            color: #2fd7d8 !important;
+            text-decoration: none;
+        }
+
+        .footer-table a {
+            color: white !important;
+            text-decoration: none;
+        }
+
+        /*Styling Footer*/
+        .footer-section-left {
+            text-align: left;
+        }
+
+        .footer-section-right {
+            text-align: right;
+        }
+
+        /*-------*/
+        .hinweis-vorkasse {
+            padding: 20px !important;
+        }
+
+        .table-td {
+            width: 50%;
+        }
+
+        /* Client-specific Styles and Fixes */
+        #outlook a {
+            padding: 0;
+        }
+
+        /* Force Outlook to provide a "view in browser" menu link. */
+        body {
+            width: 100% !important;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            margin: 0;
+            padding: 0;
+            line-height: 100% !important;
+        }
+
+        /*TABLET STYLES*/
+
+        @media only screen and (max-width: 676px) {
+            .footer-section-right {
+                width: 50% !important;
+                text-align: left !important;
+            }
+        }
+
+        @media only screen and (max-width: 479px) {
+            table[class=Responsive] {
+                width: 100% !important;
+            }
+        }
+
+        /*MOBILE STYLES*/
+        @media only screen and (max-width: 479px) {
+            table[class=Responsive] {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<table width="100%" bgcolor="#F7F7F7" cellspacing="0" id="backgroundTable" align="center" border=0
+       style="background-color: #f4f4f4;">
+    <tr>
+        <td align="center">
+            <table width="90%" class="Responsive" cellspacing="0"
+                   style="font-family: Cairo, Roboto, sans-serif !important; font-size: 13px; color:#484848; background-color: #0bb9d9;; letter-spacing: 0.5px;">
+                <tr>
+                    <!--Header mit Logo-->
+                    <td style="padding: 15px;">
+                        <img alt="Logo" src="https://www.klarsicht-it.de/media/fc/56/6c/1613983792/badge-mail.png">
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table width="90%" class="Responsive" cellspacing="0"
+                   style="font-family: Cairo, Roboto, sans-serif !important; font-size: 13px; color:#484848; background-color: white; border: 20px solid white; letter-spacing: 0.5px;">
+                <tr>
+                    <td class="padding">
+                        <h1 style="color: #484848; font-size: 20px; font-weight: 400; font-family: 'Cairo';">
+                            Ihre Reklamation / R&uuml;cknahmeanfrage<br /><br /></h1>
+                        <p>Sehr geehrte/r Kunde/Kundin,<br /><br />
+                            Zu Ihrer Anfrage liegt eine neue Antwort vor. Diese finden Sie hier:<br /><br />
+                            <a href="{{ rma.link }}" class="button">&nbsp;Zur Reklamationsoberfläche&nbsp;</a>
+                            <br /> <br />
+                            Unsere Antwort bezieht sich auf Ihre Anfrage / Reklamation mit der Vorgangsnummer
+                            #{{ rma.rma_number }}.<br />
+                            <br />
+                            Sollten Sie R&uuml;ckfragen
+                            zu Ihrer Anfrage haben, k&ouml;nnen Sie uns diese direkt &uuml;ber den oberen Button
+                            zukommen lassen. &nbsp;<br /> <br/>
+                            Mit freundlichen Gr&uuml;&szlig;en<br />
+                            Ihr KLARSICHT IT RMA Team</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table width="90%" class="Responsive" cellspacing="0"
+                   style="background-color: #0bb9d9; border: 20px solid #0bb9d9;">
+                <tr>
+                    <td>
+                        <table border="0px solid rbga(0,0,0,0)" class="footer-table" width="100%"
+                               style="font-size: 12px; font-family: Cairo, Roboto, sans-serif !important; color:#484848; letter-spacing: 0.5px; color: white;">
+                            <tr>
+                                <td class="footer-section-left">
+                                    KLARSICHT IT GmbH<br />
+                                    Luisenthaler Str. 1<br />
+                                    61184 Karben
+                                    <br />
+                                    <br />
+                                    <b>Tel.:</b> <a href="tel:060398039300">+49 (6039) 80393-00</a><br />
+                                    <b>Fax:</b> <a href="tel:060398039390">+49 (6039) 80393-90</a><br />
+                                    <b>E-Mail:</b> <a href="mailto:service@klarsicht-it.de">service@klarsicht-it.de</a>
+                                </td>
+                                <td class="footer-section-right">
+                                    <b>Steuernummer:</b> DE281057543<br />
+                                    Finanzamt Gießen<br />
+                                    HRB 96156 AG Frankfurt am Main<br />
+                                    <b>Geschäftsführer:</b> Björn May<br />
+                                    <br />
+                                    Sparkasse Oberhessen<br />
+                                    <b>IBAN:</b> DE51 5185 0079 0027 0912 53<br />
+                                    <b>BIC:</b> HELADEF1FRI<br />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+
+</html>

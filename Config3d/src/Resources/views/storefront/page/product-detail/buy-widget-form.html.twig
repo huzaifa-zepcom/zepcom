@@ -1,0 +1,83 @@
+{% sw_extends "@Storefront/storefront/page/product-detail/buy-widget-form.html.twig" %}
+
+{% block page_product_detail_buy_form_action %}{{ lineItem ? path('frontend.plugin3d.edit') : path('frontend.checkout.line-item.add') }}{% endblock %}
+
+{% block page_product_detail_buy_form_inner_csrf %}
+    {% if lineItem %}
+        {{ sw_csrf('frontend.plugin3d.edit') }}
+    {% else %}
+        {{ sw_csrf('frontend.checkout.line-item.add') }}
+    {% endif %}
+{% endblock %}
+
+{% block page_product_detail_buy_container %}
+    {% set product = page.product %}
+
+    {% if activeRoute === 'frontend.detail.page' and buyable and product.customFields.customization_config_url is defined %}
+        <div class="{{ formRowClass }} buy-widget-container">
+            <div class="col-12">
+                <a href="{{ path('frontend.plugin3d.load') }}?productId={{ page.product.id }}" type="button"
+                   class="btn btn-secondary btn-configurator">{{ "plugin3d.buttonConfigurate"|trans }}</a>
+            </div>
+        </div>
+    {% elseif not product.customFields.customization_config_url is defined %}
+        {{ parent() }}
+    {% elseif activeRoute === 'frontend.plugin3d.load' %}
+
+        {% if config('Config3d.config.baseUrl') %}
+            {% block page_product_detail_buy_quantity_container %}
+            {% endblock %}
+
+            {% block page_product_detail_buy_redirect_input %}
+                {{ parent() }}
+            {% endblock %}
+
+            {% block page_product_detail_buy_product_buy_info %}
+                {{ parent() }}
+            {% endblock %}
+
+            {% block page_product_detail_product_buy_meta %}
+                {{ parent() }}
+            {% endblock %}
+
+            {% block page_product_detail_buy_button_config3d %}
+                <div class="col-8">
+
+                    <div data-config3d-plugin="true" data-config3d-plugin-options="{}">
+
+                        <input type="hidden"
+                               id="plugin3-config"
+                               name="plugin3-config"
+                               value="{{ lineItem.payload.plugin3d_config }}">
+
+                        <input type="hidden"
+                               id="config3d-edit"
+                               name="config3d-edit"
+                               value="{{ lineItem ? lineItem.id : null }}">
+
+                        <div>
+                            {% set buttonLabel = "detail.addProduct"|trans %}
+
+                            {% if lineItem and lineItem.payload.plugin3d_config is defined %}
+                                {% set buttonLabel = "plugin3d.applyAdjustment"|trans %}
+                            {% endif %}
+                            <button
+                                    id="btn-plugin3d"
+                                    type="button"
+                                    class="btn btn-primary btn-block btn-plugin3d"
+                                    title="{{ buttonLabel|striptags }}"
+                                    aria-label="{{ buttonLabel|striptags }}">
+                                {{ buttonLabel|sw_sanitize }}
+                            </button>
+                            <button class="btn-buy d-none">{{ buttonLabel }}</button>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endif %}
+        </div>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+
+{% endblock %}

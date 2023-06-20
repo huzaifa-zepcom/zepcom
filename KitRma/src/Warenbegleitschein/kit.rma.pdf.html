@@ -1,0 +1,168 @@
+<html lang="de">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+    <title>%rmaNumber%</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&family=Libre+Barcode+128+Text&display=swap" rel="stylesheet">
+
+    <style type="text/css">
+
+        @page {
+            margin: 0 0 100px 0;
+        }
+
+        body {
+            font-size: 1.5em;
+            margin: 90px 0 0 0;
+            padding: 0.25in;
+            color: #5a5959
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            height: 100px;
+            left: 0;
+            right: 0;
+        }
+
+        footer {
+            position: fixed;
+            bottom: -60px;
+            left: 0;
+            right: 0;
+            height: 105px;
+        }
+
+        table {
+            max-width: 2480px;
+            width: 100%;
+        }
+
+        table td {
+            width: auto;
+            overflow: hidden;
+            word-wrap: break-word;
+        }
+
+        .icon {
+            margin-top: 2px;
+        }
+
+        .table-borderless > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+            border-top: none !important;
+        }
+
+        #highlight {
+            background-color: #EA0043;
+            color: white;
+            letter-spacing: 1px;
+            display: inline-block;
+            border-top: 2px solid #EA0043;
+            border-bottom: 3px solid #EA0043;
+            font-weight: bold;
+        }
+
+        .table > thead > tr > th {
+            border-bottom: 2px solid #13b8d8;
+        }
+
+        h2 {
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+        }
+
+        .barcode {
+            font-family: 'Libre Barcode 128 Text', cursive !important;
+            font-size: 3em;
+        }
+
+    </style>
+
+</head>
+<body>
+<header>
+    <img src="%header%" width="100%"/>
+</header>
+<br/>
+<div class="container-fluid">
+
+    <table class="table table-borderless">
+        <tr>
+            <th class="col-xs-3"><img class="icon" src="%kunden%"/>&nbsp;&nbsp;Kunden-Nr:
+            </th>
+            <td>%customerNumber%</td>
+        </tr>
+        <tr>
+            <th class="col-xs-3"><img class="icon" src="%datum%"/>&nbsp;&nbsp;Datum:</th>
+            <td>%date%</td>
+        </tr>
+        <tr>
+            <th class="col-xs-3"><img class="icon" src="%uhrzeit%"/>&nbsp;&nbsp;Uhrzeit:
+            </th>
+            <td>%time%</td>
+        </tr>
+    </table>
+
+    <h2>Warenbegleitschein</h2>
+    <p>Ihre WebShop-Bestellung %orderNumber% vom %orderDate%</p>
+
+    <br/>
+    <table class="table table-borderless">
+        <tr>
+            <th class="col-xs-3"><img class="icon" src="%adresse%"/>&nbsp;&nbsp;Rücklieferadresse:
+            </th>
+            <td>%address%</td>
+        </tr>
+        <tr>
+            <th class="col-xs-3"><img class="icon" src="%fehler%"/>&nbsp;&nbsp;Fehler:
+            </th>
+            <td>%businessCase%</td>
+        </tr>
+        <tr>
+            <th class="col-xs-3"><img class="icon" src="%vorgang%"/>&nbsp;&nbsp;Vorgangs-ID:
+            </th>
+            <td>%rmaNumber%</td>
+        </tr>
+        <tr>
+            <th class="col-xs-3"><img class="icon" src="%rma%"/>&nbsp;&nbsp;RMA-ID:</th>
+            <td><span id="highlight">&nbsp;&nbsp;%supplierRmaNumber%&nbsp;&nbsp;</span></td>
+        </tr>
+    </table>
+
+    <br/>
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="col-xs-1">Pos.</th>
+            <th class="col-xs-3">Nummer</th>
+            <th scope="row">Bezeichnung</th>
+            <th class="col-xs-1">Menge</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td>%productNumber%</td>
+            <td>%productName% <br/><span class="barcode">%barcodes%</span></td>
+            <td>%quantity%</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p>%additionalInfo%</p>
+</div>
+
+<footer>
+    <img src="%footer%" width="100%"/>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% sw_extends "@Storefront/storefront/page/product-detail/buy-widget-form.html.twig" %}
+
+{% block page_product_detail_product_buy_meta %}
+    {{ parent() }}
+
+    {% if page.pgToken %}
+        <input type="hidden" name="pgtoken" value="{{ page.pgToken }}" />
+    {% endif %}
+
+    {% if page.cpToken %}
+        <input type="hidden" name="cptoken" value="{{ page.cpToken }}" />
+    {% endif %}
+{% endblock %}

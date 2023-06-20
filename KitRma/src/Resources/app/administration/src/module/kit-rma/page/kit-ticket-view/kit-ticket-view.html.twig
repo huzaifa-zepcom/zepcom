@@ -1,0 +1,561 @@
+<sw-page class="kit-ticket-view" v-if="ticket">
+  <template slot="smart-bar-header">
+    <h2>{{ $tc('kit-rma.modules.ticket.rmaNumber') }} &nbsp; {{ ticket.rmaNumber }}</h2>
+  </template>
+
+  <template slot="smart-bar-actions">
+    <sw-button :routerLink="{ name: 'kit.rma.ticket_list' }">
+      {{ $t('kit-rma.general.viewListButton') }}
+    </sw-button>
+
+    <sw-button-process
+        :isLoading="isLoading"
+        :processSuccess="processSuccess"
+        variant="primary"
+        @process-finish="saveFinish"
+        @click="onClickSave">
+      {{ $t('kit-rma.general.saveButtonText') }}
+    </sw-button-process>
+  </template>
+
+  <template slot="content">
+    <sw-card-view>
+      <sw-card>
+        <sw-tabs
+            :small="false"
+            defaultItem="general">
+          <template #default="{ active }">
+            <sw-tabs-item
+                name="general"
+                :activeTab="active"
+                title="Ticket">
+              Ticket
+            </sw-tabs-item>
+
+            <sw-tabs-item
+                name="documents"
+                :activeTab="active"
+                title="Files">
+              Files
+            </sw-tabs-item>
+          </template>
+
+          <template #content="{ active }">
+            <div v-show="active === 'documents'">
+              <kit-ticket-document :files="documentView"></kit-ticket-document>
+            </div>
+
+            <div v-show="active === 'general'">
+              <sw-card :title="$tc('sw-product.detailBase.cardTitleProductInfo')" :isLoading="isLoading">
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px">
+
+                  <sw-description-list>
+                    <dt>{{ $tc('kit-rma.modules.ticket.rmaNumber') }}</dt>
+                    <dd>{{ ticket.rmaNumber }}</dd>
+
+                    <dt class="is--required">{{ $tc('kit-rma.modules.ticket.status') }}</dt>
+                    <dd>
+                      <sw-entity-single-select
+                          v-model="ticket.statusId"
+                          size="small"
+                          :criteria="baseCriteria"
+                          entity="rma_status">
+                      </sw-entity-single-select>
+                    </dd>
+                  </sw-description-list>
+
+                  <sw-description-list>
+                    <dt>{{ $tc('kit-rma.modules.ticket.createdAt') }}</dt>
+                    <dd>{{ ticket.createdAt | date({ hour: '2-digit', minute: '2-digit' }) }}</dd>
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.user') }}</dt>
+                    <dd>
+                      <sw-entity-single-select
+                          v-model="ticket.userId"
+                          size="small"
+                          :criteria="userCriteria"
+                          entity="user">
+                        <template #selection-label-property="{ item }">
+                          {{ item.firstName }} ({{ item.lastName }})
+                        </template>
+                        <template #result-label-property="{ item }">
+                          {{ item.firstName }} ({{ item.lastName }})
+                        </template>
+                      </sw-entity-single-select>
+                    </dd>
+                  </sw-description-list>
+                </sw-container>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px">
+                  <sw-description-list>
+                    <dt class="is--required">{{ $tc('kit-rma.modules.ticket.case') }}</dt>
+                    <dd>
+                      <sw-entity-single-select
+                          v-model="ticket.caseId"
+                          size="small"
+                          :criteria="baseCriteria"
+                          @change="onCaseChange"
+                          entity="rma_case">
+                      </sw-entity-single-select>
+                    </dd>
+                  </sw-description-list>
+
+                </sw-container>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px">
+                  <sw-description-list>
+                    <dt>{{ $tc('kit-rma.modules.ticket.order') }}</dt>
+                    <dd v-if="ticket.order">{{ ticket.order.orderNumber }}</dd>
+                    <dd v-else>N/A</dd>
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.customer') }}</dt>
+                    <dd v-if="ticket.customer">{{ ticket.customer.firstName }} {{ ticket.customer.lastName }} - ({{ ticket.customer.customerNumber }})</dd>
+                    <dd v-else>N/A</dd>
+
+                  </sw-description-list>
+
+                  <sw-description-list>
+                    <dt>{{ $tc('kit-rma.modules.ticket.orderDate') }}</dt>
+                    <dd v-if="ticket.order">{{ ticket.order.createdAt | date({ hour: '2-digit', minute: '2-digit' }) }}</dd>
+                    <dd v-else>N/A</dd>
+
+                    <dt class="is--required">{{ $tc('kit-rma.modules.ticket.customerEmail') }}</dt>
+                    <dd>
+                      <sw-email-field
+                          size="small"
+                          required
+                          :placeholder="$tc('sw-customer.baseForm.placeholderEmail')"
+                          v-model="ticket.customerEmail">
+                      </sw-email-field>
+                    </dd>
+
+                  </sw-description-list>
+
+                </sw-container>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px" v-if="ticket.product">
+                  <sw-description-list>
+                    <dt class="is--required">{{ $tc('kit-rma.modules.ticket.product') }}</dt>
+                    <dd>{{ ticket.product.name }} ({{ ticket.product.productNumber }})</dd>
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.serialNumber') }}</dt>
+                    <dd v-if="ticket.productSerialNumbers && ticket.productSerialNumbers.length"> {{ ticket.productSerialNumbers }}</dd>
+                    <dd v-else>NA</dd>
+
+                  </sw-description-list>
+                </sw-container>
+
+
+                <sw-container columns="1fr 1fr" gap="2px 20px" v-if="!ticket.product">
+                  <sw-description-list>
+                    <dt class="is--required">{{ $tc('kit-rma.modules.ticket.product') }}</dt>
+                    <dd>
+                      <sw-field size="small" type="text" v-model="ticket.productName"></sw-field>
+                    </dd>
+                  </sw-description-list>
+
+                  <sw-description-list>
+                    <dt class="is--required">{{ $tc('kit-rma.modules.ticket.productNumber') }}</dt>
+                    <dd>
+                      <sw-field size="small" type="text" v-model="ticket.productNumber"></sw-field>
+                    </dd>
+                  </sw-description-list>
+                </sw-container>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px">
+                  <sw-description-list>
+                    <dt>{{ $tc('kit-rma.modules.ticket.pvg') }}</dt>
+                    <dd v-if="ticket.product"> {{ ticket.product.customFields.kit_pvg_price | currency('EUR') }}</dd>
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.gross') }}</dt>
+                    <dd v-if="ticket.product"> {{ ticket.product.price[0].gross | currency('EUR') }}</dd>
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.stock') }}</dt>
+                    <dd v-if="ticket.product"> {{ ticket.product.stock }}</dd>
+
+                  </sw-description-list>
+                </sw-container>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px">
+                  <sw-description-list>
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.feeCustomer') }}</dt>
+                    <dd>
+                      <sw-field size="small" type="text" v-model="ticket.feeCustomer"></sw-field>
+                    </dd>
+
+                    <dt class="is--required">{{ $tc('kit-rma.modules.ticket.supplier') }}</dt>
+                    <dd>
+                      <sw-single-select
+                          :options="suppliers"
+                          labelProperty="name"
+                          valueProperty="id"
+                          size="small"
+                          @change="onSupplierSelected"
+                          v-model="ticket.supplierId">
+                      </sw-single-select>
+                    </dd>
+
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.supplierRmaNumber') }}</dt>
+                    <dd>
+                      <sw-field size="small" type="text" v-model="ticket.supplierRmaNumber"></sw-field>
+                    </dd>
+
+                  </sw-description-list>
+
+                  <sw-description-list>
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.feeSupplier') }}</dt>
+                    <dd>
+                      <sw-field size="small" type="text" v-model="ticket.feeSupplier"></sw-field>
+                    </dd>
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.supplierVoucher') }}</dt>
+                    <dd>
+                      <sw-field size="small" type="text" v-model="ticket.supplierVoucher"></sw-field>
+                    </dd>
+
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.kitVoucher') }}</dt>
+                    <dd>
+                      <sw-field size="small" type="text" v-model="ticket.kitVoucher"></sw-field>
+                    </dd>
+
+                  </sw-description-list>
+                </sw-container>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px">
+                  <sw-description-list>
+                    <dt>{{ $tc('kit-rma.modules.ticket.badges') }}</dt>
+                    <dd>
+                      <p v-html="$sanitize(ticket.badges)"></p>
+                    </dd>
+                  </sw-description-list>
+                </sw-container>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px">
+                  <sw-description-list>
+
+                    <dt class="is--required">{{ $tc('kit-rma.modules.ticket.quantity') }}</dt>
+                    <dd>{{ ticket.amount }}</dd>
+
+                  </sw-description-list>
+
+                  <sw-description-list>
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.amount') }}</dt>
+                    <dd v-if="ticket.product"> {{ ticket.product.price[0].net * ticket.amount | currency('EUR') }}</dd>
+                    <dd v-else>-</dd>
+
+                  </sw-description-list>
+                </sw-container>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px">
+
+                  <sw-description-list>
+                    <dt class="is--required">{{ $tc('kit-rma.modules.ticket.returnAddress') }}</dt>
+                    <dd>
+                      <sw-textarea-field
+                          size="small"
+                          type="textarea"
+                          v-model="ticket.deliveryAddress">{{ ticket.deliveryAddress }}</sw-textarea-field>
+                    </dd>
+                  </sw-description-list>
+
+                  <sw-description-list>
+                    <dt>{{ $tc('kit-rma.modules.ticket.additionalInfo') }}</dt>
+                    <dd>
+                      <sw-textarea-field
+                          size="small"
+                          type="textarea"
+                          v-model="ticket.additionalInfo">{{ ticket.additionalInfo }}</sw-textarea-field>
+                    </dd>
+                  </sw-description-list>
+
+                </sw-container>
+
+                <sw-container v-if="ticket.link" columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px">
+                  <sw-description-list>
+
+                    <dt>{{ $tc('kit-rma.modules.ticket.link') }}</dt>
+                    <dd>{{ ticket.link }}</dd>
+
+                  </sw-description-list>
+                </sw-container>
+
+              </sw-card>
+              <sw-card v-if="freetextCount"
+                       :title="$tc('kit-rma.modules.ticket.freetextfieldsTitle')"
+                       :isLoading="isLoading">
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="2px 20px">
+                  <sw-description-list :key="key" v-for="field,key in freetext">
+                    <dt class="is--required" v-if="field.requiredAdmin">{{ field.label }}</dt>
+                    <dt v-else>{{ field.label }}</dt>
+                    <dd>
+                      <sw-datepicker
+                          v-if="field.type === 'date'"
+                          size="small"
+                          :id="'freetext-' + field.id"
+                          :required="field.requiredAdmin"
+                          :config="datepickerConfig"
+                          v-model="field.value">
+                      </sw-datepicker>
+                      <sw-textarea-field
+                          size="small"
+                          type="textarea"
+                          :id="'freetext-' + field.id"
+                          :required="field.requiredAdmin"
+                          v-if="field.type === 'textarea'"
+                          v-model="field.value"
+                          :value="field.value">
+                      </sw-textarea-field>
+                      <sw-text-field
+                          :required="field.requiredAdmin"
+                          :id="'freetext-' + field.id"
+                          size="small"
+                          v-if="field.type === 'text' || field.type === 'serial'"
+                          v-model="field.value">
+                      </sw-text-field>
+                      <sw-number-field
+                          v-model="field.value"
+                          v-if="field.type === 'number'"
+                          numberType="float"
+                          :step="null"
+                          :id="'freetext-' + field.id"
+                          size="small"
+                          :min="null"
+                          :max="null"
+                          :value="null"
+                          :digits="2">
+                      </sw-number-field>
+                      <sw-select-field size="small"
+                                       v-model="field.value"
+                                       :required="field.requiredAdmin"
+                                       v-if="field.type === 'selectbox'">
+                        <option v-for="value in field.values" :value="value.trim()">{{ value.trim() }}</option>
+                      </sw-select-field>
+                      <sw-checkbox-field
+                          :required="field.requiredAdmin"
+                          :id="'freetext-' + field.id"
+                          v-if="field.type === 'checkbox'"
+                          :label="field.label"
+                          v-model="field.value"></sw-checkbox-field>
+                    </dd>
+                  </sw-description-list>
+
+                </sw-container>
+              </sw-card>
+
+              <sw-card :title="$tc('kit-rma.modules.ticket.files')" :isLoading="isLoading">
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="10px 20px">
+                  <div :key="file.id"
+                       v-for="file in files">
+                    <sw-upload-listener
+                        :uploadTag="file.id"
+                        autoUpload
+                        @media-upload-finish="setMediaItem($event, file.id)">
+                    </sw-upload-listener>
+                    <sw-media-upload-v2
+                        v-if="!isLoading"
+                        :uploadTag="file.id"
+                        :source="file.media"
+                        class="sw-settings-shipping-detail__logo-image-upload"
+                        :allowMultiSelect="false"
+                        variant="regular"
+                        fileAccept="image/*,application/pdf"
+                        :label="file.name"
+                        @media-drop="onDropMedia($event, file.id)"
+                        @media-upload-remove-image="onUnlinkLogo($event, file.id)">
+                    </sw-media-upload-v2>
+                  </div>
+                </sw-container>
+              </sw-card>
+
+              <sw-card :title="$tc('kit-rma.modules.ticket.history')" :isLoading="isLoading">
+                <sw-container gap="2px 20px">
+
+                  <sw-single-select
+                      :label="$tc('kit-rma.modules.ticket.messageType')"
+                      size="small"
+                      :options="messageTypes"
+                      v-model="ticket.message_type">
+                  </sw-single-select>
+                  <br/>
+                  <sw-entity-single-select
+                      size="small"
+                      :label="$tc('kit-rma.modules.ticket.snippet')"
+                      v-model="selectedText"
+                      labelProperty="name"
+                      :criteria="baseCriteria"
+                      @change="onSnippetSelected"
+                      entity="rma_text">
+                  </sw-entity-single-select>
+                  <br/>
+                  <sw-textarea-field
+                      size="small"
+                      :label="$tc('kit-rma.modules.ticket.message')"
+                      type="textarea"
+                      required
+                      v-model="ticket.message">
+                    {{ ticket.message }}
+                  </sw-textarea-field>
+
+                  <sw-entity-single-select
+                      v-model="ticket.statusId"
+                      size="small"
+                      :label="$tc('kit-rma.modules.ticket.status')"
+                      :criteria="baseCriteria"
+                      entity="rma_status">
+                  </sw-entity-single-select>
+                </sw-container>
+                <br/>
+
+                <sw-container gap="10px 20px">
+                  <sw-checkbox-field
+                      :disabled="!allowWgb"
+                      v-model="checkedPdf"
+                      :helpText="$tc('kit-rma.modules.ticket.pdfHelp')"
+                      label="Warenbegleitschein anhängen"
+                      @change="createPDF">
+                  </sw-checkbox-field>
+                </sw-container>
+                <br/>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px))" gap="10px 20px">
+                  <sw-button-process
+                      :isLoading="isLoading"
+                      :processSuccess="processSuccess"
+                      variant="primary"
+                      @process-finish="saveFinish"
+                      @click="onClickSave">
+                    {{ $t('kit-rma.general.sendButtonText') }}
+                  </sw-button-process>
+                </sw-container>
+                <br/>
+
+                <sw-container columns="repeat(auto-fit, minmax(250px, 1fr))" gap="10px 20px">
+                  <div :key="file.id"
+                       v-for="file in attachments">
+
+                    <sw-upload-listener
+                        :uploadTag="file.id"
+                        autoUpload
+                        @media-upload-finish="setMediaItem($event, file.id)">
+                    </sw-upload-listener>
+                    <sw-media-upload-v2
+                        v-if="!isLoading"
+                        :uploadTag="file.id"
+                        :source="file.media"
+                        class="sw-settings-shipping-detail__logo-image-upload"
+                        :allowMultiSelect="false"
+                        fileAccept="image/*,application/pdf"
+                        :label="file.name"
+                        @media-drop="onDropMedia($event, file.id)"
+                        @media-upload-remove-image="onUnlinkLogo($event, file.id)">
+                    </sw-media-upload-v2>
+                  </div>
+                </sw-container>
+              </sw-card>
+
+              <sw-card
+                  v-if="historyCount"
+                  :title="$tc('kit-rma.modules.ticket.communication')"
+                  :isLoading="isLoading">
+
+                <template slot="grid">
+                  <sw-container rows="auto auto" :key="item.id" v-for="item in history">
+                    <sw-card-section v-if="item.customerMessage" divider="bottom" slim>
+                      <sw-container>
+                        <div class="sw-review-detail__metadata">
+                          <div class="sw-review-detail__metadata-review-headline">
+                            <sw-container columns="auto 150px"
+                                          gap="0px 15px">
+                              <div class="sw-review-detail__metadata-review-title">
+                                <span v-if="ticket.customer">{{ ticket.customer.firstName }} {{ ticket.customer.lastName }} :</span>
+                              </div>
+                              <div class="sw-review-detail__metadata-review-stars">
+                                <i><small>{{ item.createdAt | date({ hour: '2-digit', minute: '2-digit' }) }}</small></i>
+                                <i>({{ item.type }})</i>
+                              </div>
+                            </sw-container>
+                          </div>
+                          <p class="sw-review-detail__metadata-review-content">
+                            <span v-html="item.customerMessage"></span>
+                            <br/>
+
+                            <a v-for="file in item.attachment"
+                               target="_blank"
+                               :href="file.url"
+                               download>{{ file.name }}</a>
+                          </p>
+                        </div>
+                      </sw-container>
+                    </sw-card-section>
+
+                    <sw-card-section v-if="item.kitMessage" divider="bottom" secondary slim>
+                      <sw-container>
+                        <div class="sw-review-detail__metadata">
+                          <div class="sw-review-detail__metadata-review-headline">
+                            <sw-container columns="auto 150px"
+                                          gap="0px 15px">
+                              <div class="sw-review-detail__metadata-review-title">
+                                                <span v-if="item.user">
+                                                    {{ item.user.firstName }} ({{ item.user.lastName }}):
+                                                </span>
+                                <span v-else>System: </span>
+                              </div>
+                            </sw-container>
+                          </div>
+                          <p class="sw-review-detail__metadata-review-content">
+                            <span v-html="item.kitMessage"></span>
+                            <br/>
+                            <a v-for="file in item.attachment"
+                               target="_blank"
+                               :href="file.url"
+                               download>{{ file.name }}</a>
+                          </p>
+                          <p>
+                            <i><small>{{ item.createdAt | date({ hour: '2-digit', minute: '2-digit' }) }}</small></i>
+                            <i>({{ item.type }})</i>
+                            <sw-icon v-if="item"
+                                     @click="showModalDelete(item)"
+                                     class="trash-edge"
+                                     color="#d35400"
+                                     :small="true"
+                                     name="default-action-trash"></sw-icon>
+                            <sw-modal v-if="deleteHistory === item.id"
+                                      @modal-close="closeModal"
+                                      :title="$tc('global.default.delete')"
+                                      variant="small">
+                              {{ $tc('kit-rma.modules.ticket.confirmDelete') }}
+                              <template #modal-footer>
+                                <sw-button size="small" @click="closeModal">
+                                  {{ $tc('global.default.cancel') }}
+                                </sw-button>
+
+                                <sw-button @click="onConfirmDelete(item.id)"
+                                           variant="primary"
+                                           size="small">
+                                  {{ $tc('global.default.delete') }}
+                                </sw-button>
+                              </template>
+                            </sw-modal>
+                          </p>
+                        </div>
+                      </sw-container>
+                    </sw-card-section>
+                  </sw-container>
+                </template>
+              </sw-card>
+            </div>
+
+          </template>
+        </sw-tabs>
+      </sw-card>
+
+    </sw-card-view>
+  </template>
+</sw-page>

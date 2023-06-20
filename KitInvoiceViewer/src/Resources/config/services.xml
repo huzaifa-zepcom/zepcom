@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="KitInvoiceViewer\Service\KitInvoiceService">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <argument type="service" id="Doctrine\DBAL\Connection" />
+        </service>
+        <service id="KitInvoiceViewer\Subscriber\KitInvoiceSubscriber">
+            <tag name="kernel.event_subscriber" />
+            <argument type="service" id="KitInvoiceViewer\Service\KitInvoiceService" />
+        </service>
+        <service id="KitInvoiceViewer\Controller\KitInvoiceController">
+            <argument type="service" id="KitInvoiceViewer\Service\KitInvoiceService" />
+            <call method="setContainer">
+                <argument id="service_container" type="service" />
+            </call>
+            <tag name="controller.service_arguments" />
+        </service>
+        <service id="KitInvoiceViewer\Command\KitInvoiceCommand">
+            <tag name="console.command"/>
+            <argument type="service" id="KitInvoiceViewer\Service\KitInvoiceService" />
+        </service>
+
+    </services>
+</container>

@@ -1,0 +1,16 @@
+{% sw_extends '@Storefront/storefront/page/account/sidebar.html.twig' %}
+
+{% block page_account_sidebar_menu_inner %}
+    {{ parent() }}
+
+    {% if config('KitRma.config.active') %}
+        {% block page_account_sidebar_link_rma %}
+            <a href="{{ path('frontend.rma.index') }}"
+               title="{{ "kitRma.rmaLink"|trans|striptags }}"
+               class="list-group-item list-group-item-action account-aside-item{% if controllerName is same as('Rma') %} is-active{% endif %}">
+                {{ "kitRma.rmaLink"|trans|sw_sanitize }}
+            </a>
+        {% endblock %}
+    {% endif %}
+
+{% endblock %}

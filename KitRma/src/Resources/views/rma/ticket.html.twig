@@ -1,0 +1,326 @@
+{% sw_extends '@Storefront/storefront/page/account/_page.html.twig' %}
+
+{% block page_account_main_content %}
+    <div class="container">
+        <div>
+            <h2 class="headline">{{ "kitRma.rmaTitle"|trans|sw_sanitize }}</h2>
+        </div>
+
+        {% if app.request.get('error') %}
+            {% set content = ("kitRma.errorMessages.fileuploaderror")|trans|sw_sanitize %}
+            {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+                type:"danger",
+                content: content
+            } %}
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-4 order-md-1 mb-4 rma-table">
+                <ul class="list-group mb-3 rma-table-ticket">
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <h4 class="d-flex justify-content-between align-items-center tica-headline mb-3">
+                            <span class="text-muted">Informationen zum Ticket</span>
+                        </h4>
+                    </li>
+                    {% if ticket.case %}
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <small class="text-muted">Geschäftsfall</small>
+                                <h6 class="my-0">{% if ticket.case %}{{ ticket.case.name }}{% else %}-{% endif %}</h6>
+                            </div>
+                        </li>
+                    {% endif %}
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <small class="text-muted">Status</small>
+                            <h6 class="my-0">{{ ticket.status_name }}</h6>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <small class="text-muted">Ticket erstellt</small>
+                            <h6 class="my-0">{{ ticket.createdAt |date("d.m.Y", "Europe/Paris") }}</h6>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <small class="text-muted">RMA-Nr.</small>
+                            <h6 class="my-0">{{ ticket.rmaNumber }}</h6>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <small class="text-muted">Produkt</small>
+                            <h6 class="my-0">{{ ticket.productName }}{% if ticket.product %} ({{ ticket.product.productNumber }}){% endif %}</h6>
+                        </div>
+                    </li>
+                    {% if ticket.order %}
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <small class="text-muted">Bestellnummer</small>
+                                <h6 class="my-0">{{ ticket.order.orderNumber }}</h6>
+                            </div>
+                        </li>
+                    {% endif %}
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <small class="text-muted">Menge</small>
+                            <h6 class="my-0">{{ ticket.amount }}</h6>
+                        </div>
+                    </li>
+                    {% for item in ticket.additional %}
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <small class="text-muted">{{ item.name }}</small>
+                                <h6 class="my-0">
+                                    {% if item.value %}
+                                        {% if item.type is same as ('checkbox') %}
+                                            {{ item.value is same as ('on') or item.value ? "kitRma.default.yes"|trans : "kitRma.default.no"|trans }}
+                                        {% elseif item.type is same as ('date') %}
+                                            {{ item.value|date('d.m.Y') }}
+                                        {% else %}
+                                            {{ item.value }}
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </h6>
+                            </div>
+                        </li>
+                    {% endfor %}
+
+                    {% if ticket.files %}
+                        <li class="list-group-item lh-condensed">
+                            <div>
+                                <small class="text-muted">Datei</small>
+                                <!-- Single button -->
+                                <div class="btn-group">
+                                    <button type="button"
+                                            class="btn btn-dark dropdown-toggle"
+                                            data-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="false">
+                                        {{ "kitRma.fields.annex"|trans }} <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        {% for file in ticket.files %}
+                                            {% if file.media.url is defined %}
+                                                <li><a target="_blank"
+                                                       href="{{ file.media.url }}"
+                                                       class="dropdown-item">
+                                                        {{ file.media.fileName }}
+                                                    </a></li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col-md-8 order-md-2 add-ticket-area">
+                <h4 class="mb-3 tica-headline">Kommunikation</h4>
+                {% if not ticket.status.endstateFinal %}
+                    <form action="{{ path('frontend.rma.ticket.comment') }}" class="ticket-form"
+                          method="post"
+                          enctype="multipart/form-data">
+                        {{ sw_csrf('frontend.rma.ticket.comment') }}
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <textarea name="answer"
+                                          id="answer"
+                                          rows="6"
+                                          class="form-control"
+                                          required
+                                          placeholder="Ihre Nachricht"></textarea>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="file-wrapper">
+                            <div class="col-md-auto">
+                                <div class="custom-file">
+                                    <input accept="image/*,application/pdf"
+                                           name="files[]"
+                                           multiple
+                                           type="file"
+                                           class="custom-file-input btn btn-secondary"
+                                           id="upload">
+                                    <label class="custom-file-label"
+                                           for="upload"
+                                           aria-describedby="upload">Datei(en) auswählen</label>
+                                </div>
+                            </div>
+                            <div class="col-md-auto cus-comment-btn">
+                                <input type="hidden"
+                                       name="id"
+                                       value="{{ app.request.get('id') }}">
+                                <input type="hidden"
+                                       name="hash"
+                                       value="{{ app.request.get('hash') }}">
+                                <button class="btn btn-primary"
+                                        type="submit"
+                                        id="submit-comment">{{ "kitRma.fields.submitButton"|trans }}</button>
+                            </div>
+                            <script>
+                                let fileList = []
+                                let upload = document.getElementById('upload')
+                                upload.addEventListener('change', () => {
+                                    for (let i = 0; i < upload.files.length; i++) {
+                                        fileList.push(upload.files[i].name)
+                                    }
+                                    document.getElementsByClassName('custom-file-label')[0].innerText = fileList.join(',')
+                                })
+                            </script>
+                        </div>
+                    </form>
+                {% endif %}
+
+                <div class="container admin-container">
+                    {% for key, item in ticket.history %}
+                        <div class="row">
+                            {% if key > 0 %}
+                                <!--<span class="each-history-sep"></span>-->
+                                <svg id="RMA-hr-line"
+                                     data-name="Ebene 1"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     viewBox="0 0 899.79 8.19">
+                                    <circle cx="895.79" cy="4.19" r="4" style="fill:#04cfd0"/>
+                                    <circle cx="4" cy="4" r="4" style="fill:#04cfd0"/>
+                                    <line x1="3.79"
+                                          y1="4.19"
+                                          x2="895.79"
+                                          y2="4.19"
+                                          style="fill:none;stroke:#04cfd0;stroke-miterlimit:10"/>
+                                </svg>
+                                <br/> <br/>
+                            {% endif %}
+                            <div class="col-md-12 histroy-comment-area">
+                                {% if item.sender == "KLARSICHT" %}
+                                    <div class="admin-comment">
+                                        <span class="user-icon">
+                                            <svg id="Layer_1"
+                                                 data-name="Layer 1"
+                                                 xmlns="http://www.w3.org/2000/svg"
+                                                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                 viewBox="0 0 409.12 459.67"><defs><linearGradient id="Unbenannter_Verlauf_16"
+                                                                                                   x1="25.27"
+                                                                                                   y1="370"
+                                                                                                   x2="434.39"
+                                                                                                   y2="370"
+                                                                                                   gradientUnits="userSpaceOnUse"><stop
+                                                                offset="0"
+                                                                stop-color="#00d9cc"/><stop offset="1"
+                                                                                            stop-color="#0bb9d9"/></linearGradient><linearGradient
+                                                            id="Unbenannter_Verlauf_16-2"
+                                                            x1="91.61"
+                                                            y1="158.53"
+                                                            x2="368.06"
+                                                            y2="158.53"
+                                                            xlink:href="#Unbenannter_Verlauf_16"/></defs><path d="M359.57,297a99.94,99.94,0,0,1-80.91,41.29H232a37.25,37.25,0,0,1-35-24.53,118.69,118.69,0,0,1-18.83-7.45,126.53,126.53,0,0,1-35.17-26A150.17,150.17,0,0,0,25.27,426.93v9.38a23.36,23.36,0,0,0,23.36,23.36H411a23.35,23.35,0,0,0,23.35-23.36v-9.38A150,150,0,0,0,359.57,297Z"
+                                                                                                               transform="translate(-25.27)"
+                                                                                                               style="fill:url(#Unbenannter_Verlauf_16)"/><path
+                                                        d="M118.21,232.18a26.6,26.6,0,0,0,23.3-13.78l.36,1,.11.29c10.62,28,31.28,51.39,58.53,61.63A37.2,37.2,0,0,1,232,263.86h46.62a26.1,26.1,0,0,0,12.77-3.44c6.37-3.56,12.1-12.6,15.06-17.39a134.11,134.11,0,0,0,11.66-24.64,26.73,26.73,0,0,0,7.35,8.47v11.43a46.9,46.9,0,0,1-46.84,46.85H232a16,16,0,1,0,0,31.91h46.62a78.85,78.85,0,0,0,78.76-78.76V226.86a26.56,26.56,0,0,0,10.64-21.28V139a26.57,26.57,0,0,0-11-21.57C351.83,51.82,296.77,0,229.83,0s-122,51.82-127.18,117.44a26.55,26.55,0,0,0-11,21.57v66.57A26.61,26.61,0,0,0,118.21,232.18ZM229.83,31.92A95.8,95.8,0,0,1,325,118.1a26.76,26.76,0,0,0-7.47,9.24C302.5,88.05,268.89,60.7,229.83,60.7c-39.89,0-73,28.29-87.67,66.48,0,.06,0,.11,0,.16a26.68,26.68,0,0,0-7.48-9.24A95.81,95.81,0,0,1,229.83,31.92Z"
+                                                        transform="translate(-25.27)"
+                                                        style="fill:url(#Unbenannter_Verlauf_16-2)"/></svg>
+                                        </span>
+                                        <p class="user-comment-headline">Nachricht von Klarsicht IT: </p>
+                                        <div class="comment-area">
+                                            {{ item.message|raw|sw_sanitize }}
+                                            {% if item.files %}
+                                                <div class="dropdown">
+                                                    <a class="btn btn-secondary dropdown-toggle"
+                                                       href="#"
+                                                       role="button"
+                                                       id="dropdownMenuLinkKit"
+                                                       data-toggle="dropdown"
+                                                       aria-haspopup="true"
+                                                       aria-expanded="false">
+                                                        {{ "kitRma.fields.annex"|trans }}
+                                                    </a>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLinkKit">
+                                                        {% for file in item.files %}
+                                                            {% if file.media.url is defined %}
+                                                                <a target="_blank"
+                                                                   href="{{ file.media.url }}"
+                                                                   class="dropdown-item">
+                                                                    {{ file.media.fileName }}
+                                                                </a>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <span class="ticket-date">{{ item.createdAt|date("d.m.Y", "Europe/Paris") }}</span>
+                                    </div>
+                                {% else %}
+                                    <div class="customer-comment">
+                                        <span class="user-icon">
+                                            <svg id="Ebene_1"
+                                                 data-name="Ebene 1"
+                                                 xmlns="http://www.w3.org/2000/svg"
+                                                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                 viewBox="0 0 427.16 512"><defs><linearGradient id="Unbenannter_Verlauf_5"
+                                                                                                x1="129.03"
+                                                                                                y1="123.32"
+                                                                                                x2="375.67"
+                                                                                                y2="123.32"
+                                                                                                gradientUnits="userSpaceOnUse"><stop
+                                                                offset="0"
+                                                                stop-color="#00d9cc"/><stop offset="1"
+                                                                                            stop-color="#0bb9d9"/></linearGradient><linearGradient
+                                                            id="Unbenannter_Verlauf_5-2"
+                                                            x1="42"
+                                                            y1="379.66"
+                                                            x2="469.16"
+                                                            y2="379.66"
+                                                            xlink:href="#Unbenannter_Verlauf_5"/></defs><path d="M252.35,246.63c33.88,0,63.22-12.15,87.2-36.13s36.12-53.3,36.12-87.19S363.52,60.1,339.54,36.12,286.23,0,252.35,0s-63.22,12.15-87.19,36.13S129,89.43,129,123.31s12.16,63.23,36.13,87.2S218.48,246.63,252.35,246.63Z"
+                                                                                                              transform="translate(-42)"
+                                                                                                              style="fill:url(#Unbenannter_Verlauf_5)"/><path
+                                                        d="M468.13,393.7A304,304,0,0,0,464,361.35a254.26,254.26,0,0,0-8-32.53,160.71,160.71,0,0,0-13.37-30.33,114.34,114.34,0,0,0-20.16-26.28,89.06,89.06,0,0,0-29-18.2,100.07,100.07,0,0,0-37-6.69c-5.23,0-10.28,2.14-20.05,8.5-6,3.92-13,8.45-20.87,13.46-6.71,4.27-15.8,8.28-27,11.9a104.91,104.91,0,0,1-66.09,0c-11.21-3.62-20.29-7.62-27-11.89-7.77-5-14.8-9.5-20.9-13.47-9.75-6.36-14.81-8.5-20-8.5a99.87,99.87,0,0,0-37,6.7,88.75,88.75,0,0,0-29,18.19A114.74,114.74,0,0,0,68.5,298.49a160.51,160.51,0,0,0-13.37,30.34,255.37,255.37,0,0,0-8,32.52A302.88,302.88,0,0,0,43,393.71c-.68,9.8-1,20-1,30.24,0,26.73,8.5,48.36,25.25,64.32C83.8,504,105.69,512,132.32,512H378.85c26.62,0,48.51-8,65.06-23.73,16.76-15.95,25.25-37.59,25.25-64.32C469.16,413.63,468.81,403.45,468.13,393.7Z"
+                                                        transform="translate(-42)"
+                                                        style="fill:url(#Unbenannter_Verlauf_5-2)"/></svg>
+                                        </span>
+                                        <p class="user-comment-headline">Ihre Nachricht: </p>
+                                        <div class="comment-area">
+                                            {{ item.message|raw|sw_sanitize }}
+                                            {% if item.files %}
+                                                <div class="dropdown">
+                                                    <a class="btn btn-secondary dropdown-toggle"
+                                                       href="#"
+                                                       role="button"
+                                                       id="dropdownMenuLinkCustomer"
+                                                       data-toggle="dropdown"
+                                                       aria-haspopup="true"
+                                                       aria-expanded="false">
+                                                        {{ "kitRma.fields.annex"|trans }}
+                                                    </a>
+
+                                                    <div class="dropdown-menu"
+                                                         aria-labelledby="dropdownMenuLinkCustomer">
+                                                        {% for file in item.files %}
+                                                            {% if file.media.url is defined %}
+                                                                <a target="_blank"
+                                                                   href="{{ file.media.url }}"
+                                                                   class="dropdown-item">
+                                                                    {{ file.media.fileName }}
+                                                                </a>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <span class="ticket-date">{{ item.createdAt|date("d.m.Y", "Europe/Paris") }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

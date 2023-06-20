@@ -1,0 +1,54 @@
+{% sw_extends '@KitRma/rma/index.html.twig' %}
+
+{% block page_account_main_content %}
+    {% block page_account_rma %}
+        <div class="account-rma">
+            {% block page_account_rma_welcome %}
+                <div class="account-welcome">
+                    {% block page_account_rma_welcome_headline %}
+                        <h1>{{ "kitRma.rmaTitle"|trans|sw_sanitize }}</h1>
+                    {% endblock %}
+
+                    {% block page_account_rma_welcome_intro %}{% endblock %}
+                </div>
+            {% endblock %}
+
+            {% block page_account_rma_main %}
+                <div class="account-rma-card card">
+                    <div class="card-body">
+                        {% block page_account_rma_form %}{% endblock %}
+                        {% block page_account_rma_search_detail %}
+                            {% block page_account_rma_search_customer %}
+                                <div class="row card-header">
+                                    <div class="col-md-6">Bestellnummer: {{ ordernumber }}</div>
+                                    <div class="col-md-6">Kunde: {{ customername }}</div>
+                                </div>
+                            {% endblock %}
+                            <div class="row">
+                                <div class="col-md-12 rma-text-p">
+                                    {{ "kitRma.rmaSearchSubheading"|trans|sw_sanitize }}
+                                </div>
+                            </div>
+                        {% endblock %}
+                        {% block page_account_rma_search_form %}
+                            <form action="{{ path('frontend.rma.complain') }}"
+                                  method="post"
+                                  data-form-csrf-handler="true">
+                                {% block page_account_rma_search_csrf %}
+                                    {{ sw_csrf('frontend.rma.complain') }}
+                                {% endblock %}
+
+                                {% for lineItem in products %}
+                                    {% sw_include '@KitRma/rma/line-item.html.twig' with {
+                                        lineItem: lineItem
+                                    } %}
+                                {% endfor %}
+                            </form>
+                        {% endblock %}
+                        {% block page_account_rma_legal %}{% endblock %}
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+    {% endblock %}
+{% endblock %}

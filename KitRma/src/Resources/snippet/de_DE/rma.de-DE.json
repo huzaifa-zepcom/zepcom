@@ -1,0 +1,57 @@
+{
+  "kitRma": {
+    "rmaLink": "Rückgabe / Reklamation",
+    "rmaTitle": "Reklamation / Warenrückgabe",
+    "overviewHeader": "Details zur Bestellung",
+    "previousComplainsTitle": "Bisherige Reklamationen / Rücknahmeanfragen",
+    "rmaIntro": "<strong>Sie haben eine Reklamation oder möchten einen Artikel an uns zurücksenden?</strong><br><br>Um Ihre Anfrage schnellstmöglichst zu bearbeiten beantworten Sie bitte die nachfolgenden Fragen sorgfältig und wahrheitsgemäß. Wir möchten an dieser Stelle darauf hinweisen, dass wir in Einzelfällen zur Abwicklung der Reklamation Rücksprache mit dem Hersteller halten müssen. Mit dem Absenden Ihrer Reklamation stimmen Sie der Weitergabe Ihrer Kaufvertragsdaten an den Hersteller zu, sofern eine Bearbeitung ansonsten nicht möglich wäre. <br><br>Unsere Entscheidung treffen wir grundsätzlich aufgrund der von Ihnen gemachten Angaben. Bitte haben Sie Verständnis dass Abweichungen, die im Rahmen der Wareneingangsprüfung festgestellt werden, zu verlängerten Bearbeitungszeiten bzw. Ablehnung Ihrer Reklamation bzw. Rücksendung führen können.<br><br>Alternativ können Sie auch über Ihre Bestellübersicht eine Reklamation bzw. eine Retoure zu einem Artikel veranlassen.<br><br><b>Beachten Sie bitte, dass diese Funktion ausschließlich für Bestellungen zur Verfügung steht, welche über unseren WebShop aufgegeben wurden. Sofern Sie Ihre Bestellung per Email aufgegeben haben, kontaktieren Sie bitte unsere Reklamationsabteilung unter reklamation@klarsicht-it.de unter Angabe Ihrer Rechnungsnummer, einer Fehlerbeschreibung und der Seriennummer des Artikels. Die Bearbeitung einer Reklamation von WebShop Bestellungen ist per Email nicht möglich. </b>",
+    "legal": "<small>Rechtlicher Hinweis: Das Nutzen dieses Formulars ist im Gewährleistungsfall für Verbraucher nicht zwingend vorgeschrieben. Es hilft uns jedoch, dass wir alle notwendigen Informationen erhalten die wir zur Bearbeitung Ihrer Reklamation erhalten. Für alle anderen Fälle ist die Nutzung des Formulars obligatorisch. Das Ausfüllen dieses Formular berechtigt&nbsp;Kunden nicht automatisch zur Rücksendung der Ware. Bitte warten Sie daher stets die Entscheidung unseres Kundenservices sowie die weiteren Handlungsanweisungen ab.&nbsp;</small>",
+    "rmaSearchSubheading": "<p><strong>Sie haben eine Reklamation oder möchten einen Artikel an uns zurücksenden?</strong><br><br>Bitte teilen Sie uns mit welchen Artikel Sie zurücksenden oder reklamieren möchten. </p>",
+    "selectProductReturn": "Rückgabe/Beschwerde",
+    "openTicket": "Ticket öffnen",
+    "default": {
+      "yes": "Ja",
+      "no": "Nein"
+    },
+    "complain": {
+      "legal": "Rechtlicher Hinweis: Das Nutzen dieses Formulars ist im Gewährleistungsfall für Verbraucher nicht zwingend vorgeschrieben. Es hilft uns jedoch, dass wir alle notwendigen Informationen erhalten die wir zur Bearbeitung Ihrer Reklamation erhalten. Für alle anderen Fälle ist die Nutzung des Formulars obligatorisch",
+      "notice": "<small>Rechtlicher Hinweis: Das Nutzen dieses Formulars ist im Gewährleistungsfall für Verbraucher nicht zwingend vorgeschrieben. Es hilft uns jedoch, dass wir alle notwendigen Informationen erhalten die wir zur Bearbeitung Ihrer Reklamation erhalten. Für alle anderen Fälle ist die Nutzung des Formulars obligatorisch</small>",
+      "questionTitle": "Bitte wählen Sie aus was Sie tun möchten",
+      "productSelectionTitle": "Welche Menge des Artikels wollen Sie reklamieren / retournieren?"
+    },
+    "fields": {
+      "zipcode": {
+        "placeholder": "Ihre Postleitzahl"
+      },
+      "orderNumber": {
+        "placeholder": "Ihre WebShop Bestellnummer"
+      },
+      "nextButton": "Weiter",
+      "submitButton": "Absenden",
+      "goBack": "Schritt zurück",
+      "productSelection": "%qty% von %total%",
+      "businessCase": "Geschäftsfall",
+      "ticketCreated": "Ticket erstellt",
+      "rmaNumber": "RMA-Nr.",
+      "product": "Produkt",
+      "ordernumber": "Bestellnummer",
+      "qty": "Menge",
+      "annex": "Anhang",
+      "empty": "keine Datensätze gefunden",
+      "all": "Alle"
+
+    },
+    "errorMessages": {
+      "casenotfound": "Geschäftsfall nicht gefunden",
+      "productnotfound": "Keine Produkte für die angegebene Bestellung gefunden. Bitte kontaktieren Sie unseren Kundenservice unter 'service@klarsicht-it.de'.",
+      "ordernotfound": "<p>Es tut uns leid, aber leider konnten wir unter dieser Bestellnummer keine Bestellung finden. Bitte überprüfen Sie, ob Sie eine korrekte Kombination aus Postleitzahl und Bestellnummer eingegeben haben. <br/><br/> Sollte dieses Problem erneut auftreten, wenden Sie sich bitte an unseren Kundendienst unter reklamation@klarsicht-it.de.</p>",
+      "customernotfound": "Kunde nicht gefunden!",
+      "productnotexists": "Es tut uns leid, aber das angeforderte Produkt existiert nicht mehr. Bitte kontaktieren Sie unseren Kundenservice unter 'service@klarsicht-it.de'.",
+      "productamount": "Sie können keinen RMA-Antrag für mehr Produkte einreichen, als Sie bestellt haben.",
+      "ticketaccessdenied": "Sie sind nicht berechtigt, dieses Ticket zu sehen.",
+      "ticketnotfound": "Ticket nicht gefunden! Überprüfen Sie erneut, ob der Ticket-Link korrekt eingegeben wurde.",
+      "fileuploaderror": "Der von Ihnen hochgeladene Dateityp wird nicht unterstützt. Sie können alle gängigen Bild Formate (.jpg, png. etc.) sowie ZIP Dateien hochalden.",
+      "filesizeerror": "Die Datei ist zu groß!"
+    }
+  }
+}

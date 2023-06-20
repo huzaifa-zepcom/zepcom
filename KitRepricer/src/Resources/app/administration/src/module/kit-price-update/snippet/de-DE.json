@@ -1,0 +1,52 @@
+{
+  "kit-price-update": {
+    "general": {
+      "mainMenuItemGeneral": "KIT Repricer",
+      "required": "{name} ist erforderlich",
+      "textDeleteConfirm": "Wollen Sie diese Regel wirklich löschen? \"{name}\" ?",
+      "modalTitleDelete": "Regel löschen",
+      "showLogButton": "Logs",
+      "searchProductNumber": "Produktnummer suchen ..."
+    },
+    "supplier": {
+      "placeholderSearchBar": "Lieferant"
+    },
+    "rules": {
+      "generalRule": "Grundregel",
+      "basicCampaign": "Grundaktion",
+      "minimumPrice": "Mindestpreis",
+      "maximumPrice": "Maximalpreis",
+      "priority": "Priorität",
+      "optimizeForPosition": "Maximaler Platz",
+      "minimumMargin": "Mindestmarge",
+      "comparitiveDifference": "Vergleichs Differenz",
+      "distanceToCompetitor": "Abstand zum n.H",
+      "enable": "Aktivieren Sie",
+      "type": "Sink / Raise",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "adjustIfInStock": "Preisanpassung nur durchführen, wenn der Artikel lagernd ist.",
+      "adjustWithCompetitorInventory": "Preisanpassung nur durchführen, bis zu einem Mitbewerber mit Bestand.",
+      "productSelection": "Artikelnummern eingeben",
+      "productName": "Produktname enthält",
+      "productDesc": "Beschreibung enthält",
+      "productSelectionPlaceholder": "Produktnummern durch ein Komma getrennt (,) eintragen",
+      "excluded": "Ausgeschlossen",
+      "updateRegularPrice": "Normale Preise auch updaten"
+    },
+    "logs": {
+      "product": "Artikel",
+      "productNumber": "Artikelnummer",
+      "cheapestDealer": "günstigster Händler Preis",
+      "originalPrice": "ursprünglicher Preis",
+      "optimizedPrice": "neuer optimierter Preis",
+      "relatedTo": "bezogen auf",
+      "minPrice": "Mindestpreis",
+      "newPlace": "Neuer Platz",
+      "margin": "Marge",
+      "action": "Aktion",
+      "rulename": "Regelname",
+      "date": "Datum"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{% sw_extends '@Storefront/storefront/page/account/_page.html.twig' %}
+
+{% block page_account_main_content %}
+    {% block page_account_rma %}
+        <div class="account-rma">
+            {% block page_account_rma_welcome %}
+                <div class="account-welcome">
+                    {% block page_account_rma_welcome_headline %}
+                        <h1>{{ "kitRma.rmaTitle"|trans|sw_sanitize }}</h1>
+                    {% endblock %}
+                </div>
+            {% endblock %}
+            {% block page_account_rma_main %}
+                <div class="account-rma-card card">
+                    <div class="card-body">
+                        {% block page_account_rma_form %}{% endblock %}
+                        {% block page_account_rma_complain_detail %}
+                            <div class="row card-header">
+                                <div class="col-md-6">Bestellnummer: {{ kitRma.ordernumber }}</div>
+                                <div class="col-md-6">Kunde: {{ kitRma.customername }}</div>
+                            </div>
+                            <div class="row card-header">
+                                <div class="col-md-6">Ausgewählter Artikel:</div>
+                                <div class="col-md-6">
+                                    <span id="productTitle">{{ kitRma.productName|u.truncate(90, '...') }}</span>
+                                </div>
+                            </div>
+                            <br/><br/>
+                            <p>{{ kitRma.ticketNotificationText|sw_sanitize }}</p>
+                        {% endblock %}
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+    {% endblock %}
+{% endblock %}

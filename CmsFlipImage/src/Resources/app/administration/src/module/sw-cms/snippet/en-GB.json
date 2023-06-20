@@ -1,0 +1,16 @@
+{
+  "sw-cms": {
+    "blocks": {
+      "textImage": {
+        "imageTextRowFlip": {
+          "label": "Three columns, flipped image and text"
+        }
+      }
+    },
+    "elements": {
+      "imageFlip": {
+        "label": "Flipped Image"
+      }
+    }
+  }
+}

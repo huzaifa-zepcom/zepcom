@@ -1,0 +1,22 @@
+{
+  "name": "kit/invoice-viewer",
+  "description": "KIT Invoice Viewer",
+  "version": "2.0.0",
+  "type": "shopware-platform-plugin",
+  "license": "MIT",
+  "authors": [{
+    "name": "KIT"
+  }],
+  "autoload": {
+    "psr-4": {
+      "KitInvoiceViewer\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "KitInvoiceViewer\\KitInvoiceViewer",
+    "label": {
+      "de-DE": "KIT Invoice Viewer",
+      "en-GB": "KIT Invoice Viewer"
+    }
+  }
+}

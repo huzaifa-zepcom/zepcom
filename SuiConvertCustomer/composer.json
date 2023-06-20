@@ -1,0 +1,50 @@
+{
+  "name": "sui/convert-customer",
+  "description": "Convert guests to customer accounts",
+  "version": "1.1.4",
+  "type": "shopware-platform-plugin",
+  "license": "proprietary",
+  "keywords": [
+    "suifactum",
+    "customer",
+    "guest",
+    "convert",
+    "account"
+  ],
+  "authors": [
+    {
+      "name": "SuiFactum",
+      "role": "Owner",
+      "homepage": "https://www.suifactum.de/"
+    }
+  ],
+  "require": {
+    "shopware/core": "6.4.*",
+    "shopware/storefront": "6.4.*",
+    "shopware/administration": "6.4.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "SuiConvertCustomer\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "SuiConvertCustomer\\SuiConvertCustomer",
+    "label": {
+      "de-DE": "Gast Kunden registrieren",
+      "en-GB": "Register Guest Customers"
+    },
+    "description": {
+      "de-DE": "Unser Plugin gibt deinen Gast Kunden die Möglichkeit, sich über einen Link in der Bestellbestätigungsmail direkt in deinem Shop als normale Kunden zu registrieren. Dadurch haben sie anschließend Zugriff auf die Bestellhistorie, können mehrere Adressen speichern und schneller Bestellungen durchführen.\n\n \n\nAlles was sie dafür tun müssen ist, in der Bestellbestätigung auf den Link zu klicken und anschließend ein Passwort zu vergeben. Hierbei wird das Passwort Feld aus dem Shopware Standard genutzt.",
+      "en-GB": "Our Plugin is giving your customers the possibility to register in your shop as a normal customer via a link in the order confirmation mail. Due to that they will get access to the order history, the can save multiple addresses and order faster.\n\nAll they have to do is to click on the link in the order confirmation and set a password. For this the Shopware standard password field is being used."
+    },
+    "manufacturerLink": {
+      "en-GB": "https://www.suifactum.de/",
+      "de-DE": "https://www.suifactum.de/"
+    },
+    "supportLink": {
+      "de-DE": "support@suifactum.de",
+      "en-GB": "support@suifactum.de"
+    }
+  }
+}

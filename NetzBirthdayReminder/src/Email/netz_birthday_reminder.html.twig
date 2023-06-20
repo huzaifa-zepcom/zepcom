@@ -1,0 +1,37 @@
+<p>
+    Hallo,
+
+    folgende User haben Hunde, welche in 14 Tagen Geburtstag haben:
+</p>
+<p>
+    {% for user in users %}
+        {{ user.firstName }} {{ user.lastName }}<br/>
+        {{ user.street }}<br/>
+        {{ user.zipcode }} {{ user.city }}<br/>
+        <br/>
+        Hundename: {{ user.netz_dog_name }}<br/>
+        {{ user.birthday|date("d.m.Y") }}<br />
+        <br />
+        {{ user.email }}<br />
+        {{ user.phone }}<br />
+        ---------------------------------------------
+        <br/>
+
+    {% endfor %}
+</p>
+
+<br/>
+*********************************************************************************<br/>
+<br/>
+R. Bubeck &amp; Sohn GmbH, Ziegleistraße 16, 75050 Gemmingen<br/>
+<br/>
+Telefon: +49 (0)7267 914230<br/>
+Fax: +49 (0)7267 914249<br/>
+E-Mail: info@bubeck-petfood.de<br/>
+Internet: www.bubeck-petfood.de<br/>
+<br/>
+Geschäftsführer:<br/>
+Karl Nagel, Kai Nagel<br/>
+Handelsregister: Stuttgart, HRB 106978<br/>
+Umsatzsteuer-Identifikationsnummer: DE 201796177<br/>
+*********************************************************************************<br/><br/>

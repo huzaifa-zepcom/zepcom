@@ -1,0 +1,32 @@
+{% block kit_status %}
+    <sw-page class="kit-rma--modules-case-listing">
+        <template slot="smart-bar-actions">
+            <sw-button :routerLink="createRoute">
+                {{ createRouteText }}
+            </sw-button>
+        </template>
+
+        <template slot="content">
+            <sw-entity-listing v-if="list"
+                               :items="list"
+                               :showSettings="false"
+                               :allowInlineEdit="false"
+                               :allowColumnEdit="false"
+                               :columns="columns"
+                               :repository="repository"
+                               :showSelection="false"
+                               :isLoading="isLoading">
+
+
+                <template #column-color="{ item }">
+                    <sw-color-badge class="kit-rma--status-badge" rounded :color="item.color"></sw-color-badge>
+                </template>
+
+            </sw-entity-listing>
+            <sw-loader v-if="isLoading"></sw-loader>
+            <sw-empty-state v-if="!isLoading && !list.length"
+                            :title="$tc('kit-rma.general.messageEmpty')">
+            </sw-empty-state>
+        </template>
+    </sw-page>
+{% endblock %}

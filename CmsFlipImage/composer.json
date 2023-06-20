@@ -1,0 +1,41 @@
+{
+  "name": "guy-colle/sw6-flip-image",
+  "description": "CMS-Element zur Hinterlegung von Hover-Bild auf Text-/Bild-Kombination",
+  "type": "shopware-platform-plugin",
+  "version": "1.0.5",
+  "authors": [
+    {
+      "name": "Guy Colle",
+      "role": "Manufacturer"
+    }
+  ],
+  "require": {
+    "shopware/core": "~6.4"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "CmsFlipImage\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "CmsFlipImage\\CmsFlipImage",
+    "copyright": "",
+    "label": {
+      "de-DE": "CMS Image Flip",
+      "en-GB": "CMS Image Flip"
+    },
+    "description": {
+      "de-DE": "CMS-Element zur Hinterlegung von Hover-Bild auf Text-/Bild-Kombination",
+      "en-GB": "CMS element to attach hover image on text/image combination"
+    },
+    "manufacturerLink": {
+      "de-DE": "https://acme.org",
+      "en-GB": "https://acme.org"
+    },
+    "supportLink": {
+      "de-DE": "https://acme.org",
+      "en-GB": "https://acme.org"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+<sw-page class="kit-settings-rules">
+    <template #content>
+        <div class="sw-confirm-field">
+            <sw-text-field
+                    :placeholder="$tc('kit-price-update.general.searchProductNumber')"
+                    v-model="searchTerm"
+                    @input="getLogs"
+                    :copyable="false"
+                    :copyableTooltip="false">
+            </sw-text-field>
+        </div>
+        <sw-data-grid
+                :isLoading="isLoading"
+                :showSelection="false"
+                :dataSource="logsList"
+                :columns="columns">
+        </sw-data-grid>
+    </template>
+
+</sw-page>

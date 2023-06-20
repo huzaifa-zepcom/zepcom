@@ -1,0 +1,12 @@
+{
+  "sui": {
+    "ordermail": {
+      "send": "Send",
+      "preview": "Preview",
+      "update": "Update",
+      "to": "To",
+      "subject": "Subject",
+      "content": "Message"
+    }
+  }
+}

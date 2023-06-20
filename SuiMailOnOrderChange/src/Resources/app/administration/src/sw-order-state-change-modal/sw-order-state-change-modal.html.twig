@@ -1,0 +1,59 @@
+{% block sw_order_state_change_modal %}
+    <sw-modal :title="modalTitle"
+              @modal-close="onCancel"
+              class="sw-order-state-change-modal">
+
+        {% block sw_order_state_change_modal_attach_documents_component %}
+            <sw-order-state-change-modal-attach-documents
+                    :order="order"
+                    :isLoading="isLoading"
+                    @on-confirm="onDocsConfirm"
+                    @on-no-mail-confirm="onNoMailConfirm">
+            </sw-order-state-change-modal-attach-documents>
+        {% endblock %}
+
+            <sw-order-state-change-modal-assign-mail-template
+                    :mailTemplatesExist="mailTemplatesExist"
+                    :technicalName="technicalName"
+                    :order="order"
+                    :sendMail="sendMail"
+                    @on-mail-preview="onPreviewEmail"
+                    @on-no-mail-confirm="onNoMailConfirm"
+                    @on-assigned-mail-template="onAssignMailTemplate"
+                    @on-create-mail-template="onCancel">
+            </sw-order-state-change-modal-assign-mail-template>
+
+            <sw-modal v-if="hasPreviewTemplate"
+                      @modal-close="closeModal">
+
+                <sw-text-field
+                        :label="$tc('sui.ordermail.to')"
+                        v-model="mail.toField">
+                </sw-text-field>
+
+                <sw-text-field
+                        :label="$tc('sui.ordermail.subject')"
+                        v-model="mail.subject">
+                </sw-text-field>
+
+                <sw-text-editor
+                        :label="$tc('sui.ordermail.content')"
+                        v-model="mail.content">
+
+                </sw-text-editor>
+
+                <template #modal-footer>
+                    <sw-button size="small" @click="closeModal">
+                        {{ $tc('global.default.cancel') }}
+                    </sw-button>
+
+                    <sw-button @click="onSendMail"
+                               variant="primary"
+                               :disabled="isLoading"
+                               size="small">
+                        {{ $tc('sui.ordermail.send') }}
+                    </sw-button>
+                </template>
+            </sw-modal>
+    </sw-modal>
+{% endblock %}

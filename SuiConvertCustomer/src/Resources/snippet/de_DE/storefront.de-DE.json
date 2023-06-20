@@ -1,0 +1,11 @@
+{
+    "gtnc": {
+        "cardHeadline": "Registrieren Sie sich als Benutzer eines Kundenkontos.",
+        "unknown": "Ein unbekannter Fehler ist aufgetreten. ",
+        "noCustomer": "Der Link scheint defekt zu sein oder es fehlen einige Daten.",
+        "enterPasswordMessage": "Bitte geben Sie ein Passwort für '%mail%' ein",
+        "alreadyCustomer": "Sie sind bereits als Kunde registriert!",
+        "success": "Herzlichen Glückwunsch! Sie sind nun als Kunde registriert.",
+        "login": "Klicken Sie auf die Schaltfläche zum Anmelden"
+    }
+}

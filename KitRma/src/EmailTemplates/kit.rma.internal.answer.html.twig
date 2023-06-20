@@ -1,0 +1,235 @@
+<!doctype html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+
+<title>&nbsp;</title>
+<style>
+    body, table, td {
+        font-family: Tahoma, Helvetica, sans-serif !important;
+    }
+    body p, ul, span, table.Responsive.table td {
+        font-size: 12px!important;
+        color: #474747;
+    }
+    a {
+        text-decoration: none;
+        font-size: 12px;
+    }
+    a.link {
+        color: #0bb9d9!important;
+    }
+
+    a.button,
+    .button,
+    table .button {
+        background-color: #0bb9d9 !important;
+        padding: 5px !important;
+        font-weight: 700;
+        text-align: center !important;
+        text-decoration: none !important;
+        color: white;
+    }
+
+    blockquote {
+        background: #f9f9f9;
+        border-left: 10px solid #ccc;
+        margin: 1.5em 10px;
+        padding: 0.5em 10px;
+        quotes: "\201C""\201D""\2018""\2019";
+    }
+
+    blockquote:before {
+        color: #ccc;
+        content: open-quote;
+        line-height: 0.1em;
+        margin-right: 0.25em;
+        vertical-align: -0.4em;
+    }
+    blockquote p {
+        display: inline;
+    }
+
+    h2 {
+        line-height: 34px;
+    }
+    .rechtstext p {
+        font-size: 10px!important;
+    }
+    table[class=Responsive] {
+        width: 600px;
+    }
+    table.Responsive.table td {
+        border-bottom: 0px solid;
+    }
+    tr.first-td-product {
+        /* border-bottom: 2px solid #f4f4f4;*/
+
+    }
+    hr {
+        background-color: #f4f4f4;
+        border: 0px solid;
+        border-bottom: 1px solid #f4f4f4;
+    }
+    .table-border {
+        border-bottom: 1px solid #f4f4f4!important;
+    }
+    /* Client-specific Styles and Fixes */
+
+    #outlook a {
+        padding: 0;
+    }
+    /* Force Outlook to provide a "view in browser" menu link. */
+
+    body {
+        width: 100% !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        margin: 0;
+        padding: 0;
+        line-height: 100% !important;
+    }
+
+    /*TABLET STYLES*/
+
+
+
+
+    @media only screen and (max-width: 676px) {
+        .footer-section-right {
+            width: 50% !important;
+            text-align: left !important;
+        }
+    }
+
+    @media only screen and (max-width: 479px) {
+        table[class=Responsive] {
+            width: 100% !important;
+        }
+    }
+
+    /*MOBILE STYLES*/
+
+    @media only screen and (max-width: 479px) {
+        table[class=Responsive] {
+            width: 100% !important;
+        }
+    }
+</style>
+
+<body>
+<table width="100%" bgcolor="#F7F7F7" cellspacing="0" id="backgroundTable" align="center" border="0" style="background-color: #f4f4f4;" margin="0 auto">
+    <tr>
+        <td align="center"><table width="600" class="Responsive" cellspacing="0" style="color:#484848; background-color: #0bb9d9;">
+                <tr>
+
+                    <!--Header mit Logo-->
+
+                    <td style="padding: 15px;"><img alt="Logo" src="https://www.klarsicht-it.de/media/fc/56/6c/1613983792/badge-mail.png"></td>
+                </tr>
+            </table></td>
+    </tr>
+    <tr>
+        <td align="center" width="600">
+            <table width="600" class="Responsive" cellspacing="0" style="font-family: 'Tahoma' !important; color:#484848; background-color: white; border: 20px solid white; margin: 0 auto;">
+                <tr>
+                    <td>
+                        <p style="font-size: 12px"><p>Es ist eine neue Antwort zu einem RMA-Fall eingegangen (#{{ rma.rma_number }}):</p>
+                        <blockquote><p>{{ text|sw_sanitize }}</p></blockquote>
+                        <p>Sehen Sie sich das Ticket hier an: <a class="button" href="{{ rma.admin_ticket_link }}">&nbsp;zum Ticket&nbsp;</a></p>
+                        <table width="100%">
+                            <tr>
+                                <td valign="top" style="font-size: 12px;"><strong>Bestellnummer</strong></td>
+                                <td valign="top" style="font-size: 12px;">{{ rma.ordernumber }}</td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="font-size: 12px;"><strong>Geschäftsfall</strong></td>
+                                <td valign="top" style="font-size: 12px;">{{ rma.case_name }}</td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="font-size: 12px;"><strong>Ticket erstellt</strong></td>
+                                <td valign="top" style="font-size: 12px;">{{ rma.created_on|date("m.d.Y") }}</td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="font-size: 12px;"><strong>Kunde</strong></td>
+                                <td valign="top" style="font-size: 12px;">{{ rma.customer_name }}</td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="font-size: 12px;"><strong>Kundennummer</strong></td>
+                                <td valign="top" style="font-size: 12px;">{{ rma.customernumber }}</td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="font-size: 12px;"><strong>Produkt</strong></td>
+                                <td valign="top" style="font-size: 12px;">{{ rma.product_name }}</td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="font-size: 12px;"><strong>Artikelnummer</strong></td>
+                                <td valign="top" style="font-size: 12px;">{{ rma.articleordernumber }}</td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="font-size: 12px;"><strong>Menge</strong></td>
+                                <td valign="top" style="font-size: 12px;">{{ rma.amount }}</td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="font-size: 12px;"><strong>Lieferant</strong></td>
+                                <td valign="top" style="font-size: 12px;">
+                                    {{ rma.supplier }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top" style="font-size: 12px;"><strong>Badges</strong></td>
+                                <td valign="top" style="font-size: 12px;">{{ rma.badges }}</td>
+                            </tr>
+                            {% for item in rma.additional %}
+                                <tr>
+                                    <td valign="top" style="font-size: 12px;"><b>{{ item.name }}</b></td>
+                                    <td valign="top" style="font-size: 12px;">{{ item.value }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table><br />
+                        <p>Mit freundlichen Grüßen,<br />
+                            Ihr Reklamations-Team der KLARSICHT IT</p>
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center" width="600">
+            <table width="600" class="Responsive" cellspacing="0" style="letter-spacing: 0.2px; margin:0 auto; font-family: 'Tahoma' !important; background-color: #0bb9d9; border: 20px solid #0bb9d9;">
+                <tr>
+                    <td>
+                        <table border="0px solid rbga(0,0,0,0)" class="footer-table" width="100%" style="font-size: 12px; color:#484848; letter-spacing: 0.2px; color: white;">
+                            <tr>
+                                <td class="footer-section-left"> KLARSICHT IT GmbH<br/>
+                                    Luisenthaler Str. 1<br/>
+                                    61184 Karben <br/>
+                                    <br/>
+                                    <br />
+                                    <b>Tel.:</b>+49 (6039) 80393-00<br/>
+                                    <b>Fax:</b>+49 (6039) 80393-90<br/>
+                                    <b>E-Mail:</b> service@klarsicht-it.de
+                                </td>
+                                <td style="text-align: right;">
+                                    <b>Steuernummer:</b> DE281057543<br/>
+                                    Finanzamt Gießen<br/>
+                                    HRB 96156 AG Frankfurt am Main<br/>
+                                    <b>Geschäftsführer:</b> Björn May<br/>
+                                    <br/>
+                                    Sparkasse Oberhessen<br/>
+                                    <b>IBAN:</b> DE51 5185 0079 0027 0912 53<br/>
+                                    <b>BIC:</b> HELADEF1FRI<br/>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

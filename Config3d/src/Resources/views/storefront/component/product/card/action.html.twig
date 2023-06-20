@@ -1,0 +1,14 @@
+{% sw_extends "@Storefront/storefront/component/product/card/action.html.twig" %}
+
+{% block component_product_box_action_buy %}
+    {% if product.customFields.customization_config_url is defined %}
+        {# always show the detail page button instead of the buy button in listing #}
+        <a href="{{ seoUrl('frontend.detail.page', {'productId': id}) }}"
+           class="btn btn-block btn-light"
+           title="{{ "listing.boxProductDetails"|trans|striptags }}">
+            {{ "listing.boxProductDetails"|trans|sw_sanitize }}
+        </a>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,51 @@
+<sw-card>
+    <sw-container columns="2fr 2fr{% if showValues %} 2fr{% endif %}"
+                  gap="0px 20px">
+
+        <sw-field :label="$tc('kit-rma.modules.case.freetext.title')"
+                  :placeholder="$tc('kit-rma.modules.case.freetext.title')"
+                  required
+                  :id="'name-' + field.id"
+                  v-model="field.name"></sw-field>
+
+        <sw-single-select
+                labelValue="label"
+                valueProperty="label"
+                :options="fieldTypes"
+                :id="'type-' + field.id"
+                :label="$tc('kit-rma.modules.case.freetext.fieldType')"
+                :placeholder="$tc('kit-rma.modules.case.freetext.fieldType')"
+                v-model="field.type"
+                required>
+        </sw-single-select>
+
+        <sw-field
+                :label="$tc('kit-rma.modules.case.freetext.valuesLabel')"
+                :helpText="$tc('kit-rma.modules.case.freetext.valuesHelptext')"
+                v-model="field.values" v-if="showValues">
+        </sw-field>
+
+        <sw-field :label="$tc('kit-rma.modules.case.freetext.explanation')"
+                  :placeholder="$tc('kit-rma.modules.case.freetext.explanation')"
+                  :id="'explanation-' + field.id"
+                  v-model="field.explanation"></sw-field>
+
+        <sw-switch-field bordered :label="$tc('kit-rma.modules.case.freetext.amountDepend')"
+                         required
+                         :id="'depend-' + field.id"
+                         :placeholder="$tc('kit-rma.modules.case.freetext.amountDepend')"
+                         v-model="field.dependOnAmount"></sw-switch-field>
+
+        <sw-switch-field bordered :label="$tc('kit-rma.modules.case.freetext.required')"
+                         required
+                         :id="'required-' + field.id"
+                         v-model="field.required"></sw-switch-field>
+
+        <sw-switch-field bordered :label="$tc('kit-rma.modules.case.freetext.requiredAdmin')"
+                         required
+                         :id="'required-admin-' + field.id"
+                         v-model="field.requiredAdmin"></sw-switch-field>
+
+
+    </sw-container>
+</sw-card>

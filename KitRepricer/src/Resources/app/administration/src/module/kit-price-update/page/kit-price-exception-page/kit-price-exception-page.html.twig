@@ -1,0 +1,231 @@
+<sw-page class="kit-settings-exception-rules">
+    <template #smart-bar-actions>
+        <sw-button
+                :disabled="false"
+                variant="danger"
+                :square="false"
+                @click="onCancel"
+                :block="false"
+                :isLoading="false">
+            {{ $tc('kit-price-update.rules.cancel') }}
+        </sw-button>
+        <sw-button
+                :disabled="false"
+                variant="primary"
+                :square="false"
+                @click="onSave"
+                :block="false"
+                :isLoading="false">
+            {{ $tc('kit-price-update.rules.save') }}
+        </sw-button>
+    </template>
+
+    <template slot="content">
+        <sw-loader v-if="isLoading" size="50px"></sw-loader>
+        <sw-card-view v-if="!isLoading">
+            <sw-card-section>
+                <sw-card large>
+                    <sw-text-field
+                            validation="required"
+                            required
+                            :label="$tc('kit-price-update.rules.generalRule')"
+                            :placeholder="$tc('kit-price-update.rules.generalRule')"
+                            v-model="name"
+                            :copyable="false"
+                            :copyableTooltip="false">
+                    </sw-text-field>
+                    <sw-single-select
+                            validation="required"
+                            required
+                            :label="$tc('kit-price-update.rules.type')"
+                            :options="types"
+                            v-model="type">
+                    </sw-single-select>
+                </sw-card>
+                <sw-card large>
+                    <sw-loader v-if="isLoading" size="50px"></sw-loader>
+                    <sw-container
+                            columns="1fr 440px"
+                            gap="14px" v-if="!isLoading">
+                        <sw-multi-select
+                                :options="manufacturers"
+                                :isSelected="setManufacturer"
+                                v-model="manufacturerIds"
+                                :label="$tc('sw-manufacturer.general.mainMenuItemList')"
+                                :placeholder="$tc('sw-manufacturer.general.mainMenuItemList')"
+                        >
+                        </sw-multi-select>
+                        <sw-multi-select
+                                :options="suppliers"
+                                v-model="supplierIds"
+                                :isSelected="setSupplier"
+                                valueProperty="value"
+                                :label="$tc('kit-price-update.supplier.mainMenuItemList')"
+                                :placeholder="$tc('kit-price-update.supplier.mainMenuItemList')"
+                        >
+                        </sw-multi-select>
+
+                        <sw-entity-multi-select
+                                entity="category"
+                                :entityCollection="categories"
+                                :isLoading="isLoading"
+                                @change="setCategory"
+                                :label="$tc('sw-category.general.headlineCategories')"
+                                :placeholder="$tc('sw-category.general.headlineCategories')"
+                        >
+                            <template #selection-label-property="{ item, index, labelProperty, valueProperty, getKey}">
+                                {{ item.name }}
+                            </template>
+
+                            <template #result-label-property="{ item, index, labelProperty, searchTerm, getKey }">
+                                <sw-highlight-text
+                                        :text="getLabel(item) || item.name"
+                                        :searchTerm="searchTerm">
+                                </sw-highlight-text>
+                            </template>
+
+                        </sw-entity-multi-select>
+
+                    </sw-container>
+                </sw-card>
+
+
+                <sw-card large>
+                    <sw-loader v-if="isLoading" size="50px"></sw-loader>
+                    <sw-container columns="1fr 1fr 1fr" gap="8px" v-if="!isLoading">
+
+                        <sw-card-section>
+                            <sw-textarea-field
+                                    type="textarea"
+                                    v-model="productNumbers"
+                                    :placeholder="$tc('kit-price-update.rules.productSelectionPlaceholder')"
+                                    :label="$tc('kit-price-update.rules.productSelection')">
+                            </sw-textarea-field>
+
+
+                            <sw-text-field
+                                    v-model="productName"
+                                    :label="$tc('kit-price-update.rules.productName')"
+                            >
+                            </sw-text-field>
+
+                            <sw-text-field
+                                    v-model="productDesc"
+                                    :label="$tc('kit-price-update.rules.productDesc')"
+                            >
+                            </sw-text-field>
+
+                        </sw-card-section>
+
+                        <sw-card-section>
+
+                            <sw-switch-field
+                                    :label="$tc('kit-price-update.rules.enable')"
+                                    v-model="enable"
+                            >
+                            </sw-switch-field>
+
+                            <sw-switch-field
+                                    :label="$tc('kit-price-update.rules.excluded')"
+                                    v-model="excluded"
+                            >
+                            </sw-switch-field>
+
+                            <sw-switch-field
+                                    :placeholder="$tc('kit-price-update.rules.updateRegularPrice')"
+                                    :label="$tc('kit-price-update.rules.updateRegularPrice')"
+                                    v-model="updateRegularPrice"
+                            ></sw-switch-field>
+
+                        </sw-card-section>
+
+                        <sw-card-section v-if="showForSink">
+                            <sw-switch-field
+                                    :label="$tc('kit-price-update.rules.adjustIfInStock')"
+                                    v-model="adjustIfInStock"
+                            >
+                            </sw-switch-field>
+
+                            <sw-switch-field
+                                    :label="$tc('kit-price-update.rules.adjustWithCompetitorInventory')"
+                                    v-model="adjustWithCompetitorInventory"
+                            >
+                            </sw-switch-field>
+                        </sw-card-section>
+                    </sw-container>
+                </sw-card>
+
+                <sw-card large>
+                    <sw-loader v-if="isLoading" size="50px"></sw-loader>
+                    <sw-container columns="1fr 1fr 1fr"
+                                  gap="14px" v-if="!isLoading">
+
+                        <sw-number-field
+                                numberType="float"
+                                :placeholder="$tc('kit-price-update.rules.priority')"
+                                :label="$tc('kit-price-update.rules.priority')"
+                                :step="1"
+                                :min="null"
+                                :max="null"
+                                v-model="priority">
+                        </sw-number-field>
+
+                        <sw-text-field
+                                :placeholder="$tc('kit-price-update.rules.minimumPrice')"
+                                :label="$tc('kit-price-update.rules.minimumPrice')"
+                                v-model="minPrice">
+                            <template #suffix>
+                                €
+                            </template>
+                        </sw-text-field>
+                        <sw-number-field
+                                numberType="float"
+                                :placeholder="$tc('kit-price-update.rules.maximumPrice')"
+                                :label="$tc('kit-price-update.rules.maximumPrice')"
+                                :step="0.01"
+                                :min="null"
+                                :max="null"
+                                v-model="maxPrice">
+                            <template #suffix>
+                                €
+                            </template>
+                        </sw-number-field>
+
+                        <sw-text-field
+                                :placeholder="minMarginLabel"
+                                :label="minMarginLabel"
+                                v-model="minMargin"
+                        >
+                            <template #suffix>
+                                {{ showForSink ? '%' : '€' }}
+                            </template>
+                        </sw-text-field>
+
+                        <sw-text-field
+                                :placeholder="$tc('kit-price-update.rules.distanceToCompetitor')"
+                                :label="$tc('kit-price-update.rules.distanceToCompetitor')"
+                                v-model="gapToCompetitor"
+                        >
+                            <template #suffix>
+                                €
+                            </template>
+                        </sw-text-field>
+
+                        <sw-number-field
+                                v-if="showForSink"
+                                numberType="int"
+                                :placeholder="$tc('kit-price-update.rules.optimizeForPosition')"
+                                :label="$tc('kit-price-update.rules.optimizeForPosition')"
+                                :step="1"
+                                :min="1"
+                                :max="10"
+                                v-model="position"
+                        >
+                        </sw-number-field>
+                    </sw-container>
+                </sw-card>
+            </sw-card-section>
+        </sw-card-view>
+
+    </template>
+</sw-page>

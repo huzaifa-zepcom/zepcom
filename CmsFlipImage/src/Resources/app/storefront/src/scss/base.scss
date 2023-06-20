@@ -1,0 +1,23 @@
+.flip-img-container {
+  position: relative;
+  display: block;
+  perspective: 1000px;
+}
+
+.cms-image-flip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transition: transform 0.5s;
+}
+
+.flip-image-front {
+  transform: rotateY(0deg);
+}
+
+.flip-image-back {
+  transform: rotateY(-180deg);
+}

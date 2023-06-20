@@ -1,0 +1,33 @@
+<sw-page class="kit-address-view">
+    <template slot="smart-bar-actions">
+        <sw-button :routerLink="{ name: 'kit.rma.address_list' }">
+            {{ $tc('kit-rma.general.viewListButton') }}
+        </sw-button>
+
+        <sw-button-process
+                :isLoading="isLoading"
+                :processSuccess="processSuccess"
+                variant="primary"
+                @process-finish="saveFinish"
+                @click="onClickSave">
+            {{ $tc('kit-rma.general.saveButtonText') }}
+        </sw-button-process>
+    </template>
+    <template slot="content">
+        <sw-card-view>
+            <sw-card v-if="address">
+                <sw-field required :label="$tc('kit-rma.modules.address.name')" v-model="address.name" validation="required"></sw-field>
+                <sw-textarea-field required v-model="address.address" validation="required" :label="$tc('kit-rma.modules.address.addressLabel')"></sw-textarea-field>
+
+                <sw-multi-select
+                        :label="$tc('kit-rma.modules.address.supplierLabel')"
+                        :options="suppliers"
+                        labelProperty="name"
+                        valueProperty="id"
+                        v-model="selectedSuppliers">
+                </sw-multi-select>
+
+            </sw-card>
+        </sw-card-view>
+    </template>
+</sw-page>

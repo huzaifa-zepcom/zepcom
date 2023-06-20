@@ -1,0 +1,77 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label for="freetext_{{ field.name|sw_sanitize }}_{{ i }}">
+                {% if field.type != 'checkbox' %}
+                    <b>
+                        {{ field.name|sw_sanitize }} {% if i > 0 %} {{ i }} {% endif %}
+                        {% if field.required %} *{% endif %}
+                    </b>
+                {% endif %}
+                {% if field.explanation %}
+                    <small class="form-text text-muted">
+                        {{ field.explanation|sw_sanitize }}
+                    </small>
+                {% endif %}
+            </label>
+
+            {% if field.type == 'text' or field.type == 'serial' %}
+                <input type="text"
+                       id="freetext_{{ field.name|sw_sanitize }}_{{ i }}"
+                       name="freetext_{{ field.name }}_{{ i }}"
+                       value=""
+                       class="form-control"
+                       maxlength="{{ field.values[0] }}"
+                       {% if field.required %}required{% endif %}/>
+            {% elseif field.type == 'number' %}
+                <input type="number"
+                       name="freetext_{{ field.name }}_{{ i }}"
+                       id="freetext_{{ field.name|sw_sanitize }}_{{ i }}"
+                       value=""
+                       class="form-control"
+                       {% if field.required %}required{% endif %}/>
+            {% elseif field.type == 'date' %}
+                <input type="date"
+                       name="freetext_{{ field.name }}_{{ i }}"
+                       id="freetext_{{ field.name|sw_sanitize }}_{{ i }}"
+                       value=""
+                       class="form-control"
+                       {% if field.required %}required{% endif %}/>
+            {% elseif field.type == 'textarea' %}
+                <div class="form-group">
+               <textarea {% if field.required %}required{% endif %}
+                         class="form-control"
+                         name="freetext_{{ field.name }}_{{ i }}"
+                         id="freetext_{{ field.name|sw_sanitize }}_{{ i }}"
+                         rows="{{ field.values[0] }}"></textarea>
+                </div>
+            {% elseif field.type == 'checkbox' %}
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox"
+                           class="custom-control-input"
+                           name="freetext_{{ field.name }}_{{ i }}"
+                           id="freetext_{{ field.name|sw_sanitize }}_{{ i }}"
+                           {% if field.required %}required{% endif %} />
+                    <label class="custom-control-label" for="freetext_{{ field.name|sw_sanitize }}_{{ i }}">
+                        {{ field.name }}
+                    </label>
+                </div>
+            {% elseif field.type == 'selectbox' %}
+                <select {% if field.required %}required{% endif %}
+                        class="form-control"
+                        name="freetext_{{ field.name }}_{{ i }}"
+                        id="freetext_{{ field.name|sw_sanitize }}_{{ i }}">
+                    {% for val in field.values|split(',') %}
+                        <option value="{{ val }}">{{ val }}</option>
+                    {% endfor %}
+                </select>
+            {% elseif field.type == 'file' %}
+                <input type="file"
+                       class="form-control-file"
+                       name="file_{{ field.name }}_{{ i }}"
+                       id="file_{{ field.name|sw_sanitize }}_{{ i }}"
+                       {% if field.required %}required{% endif %} />
+            {% endif %}
+        </div>
+    </div>
+</div>

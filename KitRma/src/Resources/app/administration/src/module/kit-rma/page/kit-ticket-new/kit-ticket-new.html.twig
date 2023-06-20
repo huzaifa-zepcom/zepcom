@@ -1,0 +1,97 @@
+<sw-page class="kit-ticket-new">
+    <template slot="content">
+        <sw-loader v-if="isLoading"></sw-loader>
+        <sw-card-view>
+            <sw-card>
+                <sw-container columns="2fr 2fr" gap="10px">
+                    <sw-text-field
+                            :label="$tc('kit-rma.modules.ticket.customerNumber')"
+                            :placeholder="$tc('kit-rma.modules.ticket.customerNumber')"
+                            @blur="fetchCustomer"
+                            required
+                            :helpText="$tc('kit-rma.modules.ticket.customerHelpText')"
+                            validation="required"
+                            :disabled="isLoading"
+                            v-model="customerNumber">
+                    </sw-text-field>
+
+                    <sw-text-field
+                            :label="$tc('kit-rma.modules.ticket.order')"
+                            :placeholder="$tc('kit-rma.modules.ticket.order')"
+                            @blur="fetchOrder"
+                            :disabled="isLoading"
+                            v-model="orderNumber">
+                    </sw-text-field>
+
+                    <sw-text-field
+                            :label="$tc('kit-rma.modules.ticket.product')"
+                            :placeholder="$tc('kit-rma.modules.ticket.enterProductNumber')"
+                            @blur="fetchProduct"
+                            :disabled="isLoading"
+                            v-model="productNumber">
+
+                    </sw-text-field>
+
+                    <sw-single-select
+                            :options="productsFromOrder"
+                            :label="$tc('kit-rma.modules.ticket.product')"
+                            :placeholder="$tc('kit-rma.modules.ticket.selectProduct')"
+                            @change="fetchSerialsByProduct"
+                            :disabled="isLoading"
+                            v-model="productNumber">
+
+                    </sw-single-select>
+
+                    <sw-multi-select
+                            v-if="serialNumbers.length"
+                            :options="serialNumbers"
+                            :label="$tc('kit-rma.modules.ticket.selectSerialNumber')"
+                            :disabled="isLoading"
+                            v-model="selectedSerialNumbers">
+
+                    </sw-multi-select>
+
+                    <sw-select-field
+                            v-if="!serialNumbers.length"
+                            :label="$tc('kit-rma.modules.ticket.quantity')"
+                            :placeholder="$tc('kit-rma.modules.ticket.quantity')"
+                            v-model="ticket.amount"
+                            required
+                            validation="required"
+                    >
+                        <option v-for="index in quantity" :key="index" :value="index">
+                            {{ index }}
+                        </option>
+                    </sw-select-field>
+
+                    <sw-entity-single-select
+                            entity="rma_status"
+                            :label="$tc('kit-rma.modules.ticket.status')"
+                            labelProperty="name"
+                            :criteria="baseCriteria"
+                            v-model="ticket.statusId"
+                            required
+                            validation="required"
+                            :isLoading="isLoading"
+                            :placeholder="$tc('kit-rma.modules.ticket.status')">
+                    </sw-entity-single-select>
+
+                    <sw-entity-single-select
+                            entity="rma_case"
+                            :label="$tc('kit-rma.modules.ticket.case')"
+                            labelProperty="name"
+                            required
+                            validation="required"
+                            :criteria="baseCriteria"
+                            v-model="ticket.caseId"
+                            :isLoading="isLoading"
+                            :placeholder="$tc('kit-rma.modules.ticket.case')">
+                    </sw-entity-single-select>
+                </sw-container>
+                <sw-button variant="primary" :block="true" @click="onClickSave">
+                    {{ $tc('kit-rma.general.create') }}
+                </sw-button>
+            </sw-card>
+        </sw-card-view>
+    </template>
+</sw-page>

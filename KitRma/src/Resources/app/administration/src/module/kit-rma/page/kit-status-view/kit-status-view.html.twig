@@ -1,0 +1,55 @@
+{% block kit_status %}
+    <sw-page class="kit-rma--modules-status-detail">
+        <template slot="smart-bar-actions">
+            <sw-button :routerLink="{ name: 'kit.rma.status_list' }">
+                {{ $tc('kit-rma.general.viewListButton') }}
+            </sw-button>
+
+            <sw-button-process
+                    :isLoading="isLoading"
+                    :processSuccess="processSuccess"
+                    variant="primary"
+                    @process-finish="saveFinish"
+                    @click="onClickSave">
+                {{ $tc('kit-rma.general.saveButtonText') }}
+            </sw-button-process>
+        </template>
+
+        <template slot="content">
+            <sw-card-view>
+
+                <sw-card v-if="status" :isLoading="isLoading">
+                    <sw-container columns="2fr 2fr" gap="10px">
+                        <sw-field :label="$tc('kit-rma.modules.status.name')" v-model="status.name"></sw-field>
+                        <sw-field :label="$tc('kit-rma.modules.status.nameExtLabel')" v-model="status.nameExt"></sw-field>
+
+                        <sw-radio-field
+                                :label="$tc('kit-rma.modules.status.endstateLabel')"
+                                bordered
+                                v-model="status.endstate"
+                                :options="[
+                                 {'value': true, 'name': 'Ja'},
+                                 {'value': false, 'name': 'Nein'}
+                             ]">
+                        </sw-radio-field>
+
+                        <sw-radio-field
+                                :label="$tc('kit-rma.modules.status.endstateFinalLabel')"
+                                bordered
+                                v-model="status.endstateFinal"
+                                :options="[
+                                 {'value': true, 'name': 'Ja'},
+                                 {'value': false, 'name': 'Nein'}
+                             ]">
+                        </sw-radio-field>
+
+                    </sw-container>
+                    <sw-colorpicker v-model="status.color"
+                                    :label="$tc('kit-rma.modules.status.colorLabel')"
+                                    :placeholder="$tc('kit-rma.modules.status.colorLabel')">
+                    </sw-colorpicker>
+                </sw-card>
+            </sw-card-view>
+        </template>
+    </sw-page>
+{% endblock %}

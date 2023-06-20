@@ -1,0 +1,13 @@
+{% sw_extends "@Storefront/storefront/component/checkout/offcanvas-item.html.twig" %}
+
+{% block component_offcanvas_product_details_features %}
+
+    {% if lineItem.payload.plugin3d_config %}
+        <a href="{{ path('frontend.plugin3d.load') }}?lineItemId={{ lineItem.id }}"
+           type="button"
+           class="btn btn-secondary btn-configurator">
+            {{ "plugin3d.changeConfiguration"|trans }}
+        </a>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

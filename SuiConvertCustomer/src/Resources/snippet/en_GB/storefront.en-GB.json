@@ -1,0 +1,11 @@
+{
+    "gtnc": {
+        "cardHeadline": "Register as a customer",
+        "unknown": "An unknown error occured. ",
+        "noCustomer": "Link seems to be broken or some data is missing.",
+        "enterPasswordMessage": "Please enter a password for '%mail%'",
+        "alreadyCustomer": "You are already registered as a customer!",
+        "success": "Congratulations! You are now registered as a customer.",
+        "login": "Click on the button to login"
+    }
+}

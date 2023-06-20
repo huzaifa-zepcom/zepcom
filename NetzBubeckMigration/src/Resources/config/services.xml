@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="NetzBubeckMigration\Service\StoreLocatorMigrationService">
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="neti_store_locator.repository"/>
+        </service>
+
+        <service id="NetzBubeckMigration\Command\StoreLocatorMigrationCommand">
+            <tag name="console.command"/>
+            <argument type="service" id="NetzBubeckMigration\Service\StoreLocatorMigrationService"/>
+        </service>
+
+
+        <service id="NetzBubeckMigration\Command\BlogMigrationCommand">
+            <tag name="console.command"/>
+            <argument type="service" id="NetzBubeckMigration\Service\BlogMigrationService"/>
+        </service>
+
+        <service id="NetzBubeckMigration\Service\BlogMigrationService">
+            <argument type="service" id="s_plugin_netzp_blog.repository"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="s_plugin_netzp_blog_media.repository"/>
+        </service>
+
+    </services>
+</container>

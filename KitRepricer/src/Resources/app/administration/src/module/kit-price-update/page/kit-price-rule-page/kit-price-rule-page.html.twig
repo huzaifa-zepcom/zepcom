@@ -1,0 +1,182 @@
+<sw-page class="kit-settings-rules">
+    <template #smart-bar-actions>
+        <sw-button :square="false"
+                   :block="false"
+                   variant="ghost"
+                   :routerLink="{ name: 'kit.price.update.logs' }">
+            {{ $tc('kit-price-update.general.showLogButton') }}
+        </sw-button>
+        <sw-button :disabled="false"
+                   variant="primary"
+                   :square="false"
+                   :block="false"
+                   :isLoading="false"
+                   @click="onSave">
+            {{ $tc('kit-price-update.rules.save') }}
+        </sw-button>
+    </template>
+
+    <template slot="content">
+        <sw-card-view>
+            <sw-card-section>
+
+                <sw-card large>
+                    <sw-single-select
+                            validation="required"
+                            required
+                            @change="onChangeRule"
+                            :label="$tc('kit-price-update.rules.type')"
+                            :options="types"
+                            v-model="type">
+                    </sw-single-select>
+                </sw-card>
+                <sw-card large>
+                    <sw-loader v-if="isLoading" size="50px"></sw-loader>
+                    <sw-container columns="1fr 440px"
+                                  gap="14px" v-if="!isLoading">
+
+                        <sw-multi-select
+                                :options="manufacturers"
+                                :isSelected="setManufacturer"
+                                v-model="manufacturerIds"
+                                :label="$tc('sw-manufacturer.general.mainMenuItemList')"
+                                :placeholder="$tc('sw-manufacturer.general.mainMenuItemList')"
+                        >
+                        </sw-multi-select>
+
+                        <sw-multi-select
+                                :options="suppliers"
+                                v-model="supplierIds"
+                                :isSelected="setSupplier"
+                                valueProperty="value"
+                                :label="$tc('kit-price-update.supplier.mainMenuItemList')"
+                                :placeholder="$tc('kit-price-update.supplier.mainMenuItemList')"
+                        >
+                        </sw-multi-select>
+
+                        <sw-entity-multi-select
+                                entity="category"
+                                :entityCollection="categories"
+                                :isLoading="isLoading"
+                                @change="setCategory"
+                                :label="$tc('sw-category.general.headlineCategories')"
+                                :placeholder="$tc('sw-category.general.headlineCategories')"
+                        >
+                            <template #selection-label-property="{ item, index, labelProperty, valueProperty, getKey}">
+                                {{ item.name }}
+                            </template>
+
+                            <template #result-label-property="{ item, index, labelProperty, searchTerm, getKey }">
+                                <sw-highlight-text
+                                        :text="getLabel(item) || item.name"
+                                        :searchTerm="searchTerm">
+                                </sw-highlight-text>
+                            </template>
+                        </sw-entity-multi-select>
+
+                        <sw-text-field
+                                :placeholder="$tc('kit-price-update.rules.minimumPrice')"
+                                :label="$tc('kit-price-update.rules.minimumPrice')"
+                                required
+                                v-model="minPrice">
+                            <template #suffix>
+                                €
+                            </template>
+                        </sw-text-field>
+                    </sw-container>
+                </sw-card>
+
+                <sw-card large>
+                    <sw-loader v-if="isLoading" size="50px"></sw-loader>
+                    <sw-container columns="1fr 1fr 1fr"
+                                  gap="14px" v-if="!isLoading">
+
+                        <sw-text-field
+                                :placeholder="minMarginLabel"
+                                :label="minMarginLabel"
+                                required
+                                v-model="minMargin"
+                        >
+                            <template #suffix>
+                                {{ showForSink ? '%' : '€' }}
+                            </template>
+                        </sw-text-field>
+
+                        <sw-text-field
+                                :placeholder="$tc('kit-price-update.rules.distanceToCompetitor')"
+                                :label="$tc('kit-price-update.rules.distanceToCompetitor')"
+                                required
+                                v-model="gapToCompetitor"
+                        >
+                            <template #suffix>
+                                €
+                            </template>
+                        </sw-text-field>
+
+                        <sw-switch-field
+                                :placeholder="$tc('kit-price-update.rules.updateRegularPrice')"
+                                :label="$tc('kit-price-update.rules.updateRegularPrice')"
+                                v-model="updateRegularPrice"
+                        ></sw-switch-field>
+
+                    </sw-container>
+                </sw-card>
+                <sw-card large>
+                    <sw-loader v-if="isLoading" size="50px"></sw-loader>
+                    <sw-container v-if="!isLoading">
+
+                        <sw-card-section>
+                            <div class="add-align-right">
+                                <sw-button
+                                        @click="createNew"
+                                        :disabled="false"
+                                        variant="ghost"
+                                        :block="false"
+                                        :isLoading="false">
+                                    Add
+                                    <sw-icon name="default-basic-plus-line"></sw-icon>
+                                </sw-button>
+                            </div>
+                            <sw-data-grid
+                                    :showSelection="false"
+                                    :dataSource="exceptionList"
+                                    :columns="columns">
+                                <template #actions="{ item }">
+                                    <sw-context-menu-item
+                                            @click="onEdit(item)">
+                                        {{ $tc('global.default.edit') }}
+                                    </sw-context-menu-item>
+                                    <sw-context-menu-item
+                                            variant="danger" @click="onDelete(item.id)">
+                                        {{ $tc('global.default.delete') }}
+                                    </sw-context-menu-item>
+                                </template>
+
+                                <template #action-modals="{ item }">
+                                    <sw-modal v-if="showDeleteModal === item.id"
+                                              @modal-close="onCloseDeleteModal"
+                                              :title="$tc('kit-price-update.general.modalTitleDelete')"
+                                              variant="small">
+                                        <p>
+                                            {{ $tc('kit-price-update.general.textDeleteConfirm', 0, { name: `${item.name}` }) }}
+                                        </p>
+                                        <template #modal-footer>
+
+                                            <sw-button @click="onCloseDeleteModal" size="small">
+                                                {{ $tc('global.default.cancel') }}
+                                                </sw-button>
+
+                                                <sw-button @click="onConfirmDelete(item.id)" variant="primary" size="small">
+                                                {{ $tc('global.default.delete') }}
+                                            </sw-button>
+                                        </template>
+                                    </sw-modal>
+                                </template>
+                            </sw-data-grid>
+                        </sw-card-section>
+                    </sw-container>
+                </sw-card>
+            </sw-card-section>
+        </sw-card-view>
+    </template>
+</sw-page>

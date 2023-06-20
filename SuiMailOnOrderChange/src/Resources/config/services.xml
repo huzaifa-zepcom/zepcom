@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="SuiMailOnOrderChange\Controller\SuiMailOnOrderChangeController" public="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <argument type="service" id="Shopware\Core\Framework\Validation\DataValidator" />
+            <argument type="service" id="Shopware\Core\Framework\Adapter\Twig\StringTemplateRenderer" />
+            <argument type="service" id="Shopware\Core\Content\Mail\Service\MailFactory" />
+            <argument type="service" id="Shopware\Core\Content\Mail\Service\MailSender" />
+            <argument type="service" id="Shopware\Core\Content\Media\DataAbstractionLayer\MediaRepositoryDecorator" />
+            <argument type="service" id="Shopware\Core\System\SalesChannel\SalesChannelDefinition" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <argument type="service" id="Shopware\Core\Content\Media\Pathname\UrlGeneratorInterface" />
+            <argument type="service" id="Shopware\Core\Content\Media\MediaService" />
+            <argument type="service" id="document.repository" />
+            <argument type="service" id="Shopware\Core\Checkout\Document\DocumentService" />
+        </service>
+
+    </services>
+</container>

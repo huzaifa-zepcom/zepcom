@@ -1,0 +1,24 @@
+<!-- eslint-disable-next-line sw-deprecation-rules/no-twigjs-blocks -->
+{% block sw_cms_element_image_flip %}
+<div
+    class="sw-cms-el-image-flip"
+    :class="displayModeClass"
+    :style="styles"
+>
+    <!-- eslint-disable-next-line sw-deprecation-rules/no-twigjs-blocks -->
+    {% block sw_cms_element_image_flip_content %}
+    <img
+        class="main-img"
+        :src="mediaUrl"
+        :style="imgStyles"
+        alt=""
+    >
+    <img
+        class="flip-img"
+        :src="mediaUrlFlip"
+        :style="imgStylesFlip"
+        alt=""
+    >
+    {% endblock %}
+</div>
+{% endblock %}

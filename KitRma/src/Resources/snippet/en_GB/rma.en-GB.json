@@ -1,0 +1,56 @@
+{
+  "kitRma": {
+    "rmaLink": "Return / Complaint",
+    "rmaTitle": "Complaint / Return of goods",
+    "overviewHeader": "Order detail",
+    "previousComplainsTitle": "Previous Complaints / Return Requests",
+    "rmaIntro": "<strong>You have a complaint or would like to return an article to us ?</strong><br><br>In order to process your request as quickly as possible, please answer the following questions carefully and truthfully. At this point we would like to point out that in individual cases we have to consult the manufacturer in order to process the complaint. By sending us your complaint, you agree to the transfer of your purchase contract data to the manufacturer, if processing would otherwise not be possible. <br><br>We always make our decision based on the information you provide. Please understand that deviations, which are determined in the course of the incoming goods inspection, can lead to extended processing times or rejection of your complaint or return.<br><br> Alternatively, you can also initiate a complaint or a return of an article via your order overview.<br><br><b> Please note that this function is only available for orders placed via our WebShop. If you have placed your order by email, please contact our complaints department at reklamation@klarsicht-it.de stating your invoice number, a description of the error and the serial number of the item. It is not possible to process a complaint of WebShop orders by email. </b>",
+    "legal": "<small>Legal notice: The use of this form is not mandatory for consumers in case of warranty claims. It helps us, however, that we receive all necessary information we need to process your complaint. For all other cases the use of this form is obligatory. Filling out this form does not automatically entitle&nbsp;customers to return the goods. Therefore, please always await the decision of our customer service department and further instructions",
+    "rmaSearchSubheading": "<p><strong>You have a complaint or would like to return an article to us?</strong><br><br> Please let us know which article you would like to return or complain about. </p>",
+    "selectProductReturn": "Return/Complaint",
+    "openTicket": "Open ticket",
+    "default": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "complain": {
+      "legal": "Legal notice: The use of this form is not mandatory for consumers in case of warranty claims. It helps us, however, that we receive all necessary information we need to process your complaint. For all other cases, the use of this form is mandatory",
+      "notice": "<small>Legal notice: The use of this form is not mandatory for consumers in case of warranty claims. It helps us, however, that we receive all necessary information we need to process your complaint. For all other cases the use of the form is obligatory</small>",
+      "questionTitle": "Please choose what you would like to do",
+      "productSelectionTitle": "What quantity of the item do you want to complain / return?"
+    },
+    "fields": {
+      "zipcode": {
+        "placeholder": "Your zipcode"
+      },
+      "orderNumber": {
+        "placeholder": "Your webshop order number"
+      },
+      "nextButton": "Next",
+      "submitButton": "Submit",
+      "goBack": "Step back",
+      "productSelection": "%qty% of %total%",
+      "businessCase": "business case",
+      "ticketCreated": "Ticket created",
+      "rmaNumber": "RMA No.",
+      "product": "product",
+      "ordernumber": "Order number",
+      "qty": "quantity",
+      "annex": "attachment",
+      "empty": "no records found",
+      "all": "all"
+    },
+    "errorMessages": {
+      "casenotfound": "Business case not found",
+      "productnotfound": "No products found for the provided order. Please contact our customer service at 'service@klarsicht-it.de'",
+      "ordernotfound": "<p>We are sorry, but unfortunately we could not find an order under this order number. Please check if you have entered a correct combination of zip code and order number. <br/><br/> If this problem occurs again, please contact our customer service at reklamation@klarsicht-it.de.</p>",
+      "customernotfound": "Customer not found!",
+      "productnotexists": "Sorry, but the requested product does not exist anymore. Please contact our customer service at 'service@klarsicht-it.de'",
+      "productamount": "You cannot submit an RMA request for more products than you have ordered.",
+      "ticketaccessdenied": "Ticket not found! Re-check if the ticket link is entered correctly.",
+      "ticketnotfound": "Ticket not found! Re-check if the ticket link is entered correctly.",
+      "fileuploaderror": "The file type you uploaded is not supported. You can upload all common image formats (.jpg, png. etc.) as well as ZIP files."
+      "filesizeerror": "File is too large."
+    }
+  }
+}

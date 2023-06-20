@@ -1,0 +1,72 @@
+{# @var page \Shopware\Storefront\Page\Checkout\Cart\CheckoutCartPage #}
+{# @var delivery \Shopware\Core\Checkout\Cart\Delivery\Struct\Delivery #}
+{# @var lineItem \Shopware\Core\Checkout\Cart\LineItem\LineItem #}
+
+{% set isDiscount = (not lineItem.good and lineItem.price.totalPrice <= 0) %}
+{% set isNested = lineItem.children.count > 0 %}
+{% set childTemplate = '@KitRma/rma/line-item.html.twig' %}
+{% set deliveryPosition = null %}
+
+{% if page.cart.deliveries.count > 0 %}
+  {% set delivery = page.cart.deliveries.first %}
+
+  {% set deliveryPosition = delivery.positions.get(lineItem.id) %}
+{% endif %}
+
+<div class="cart-item cart-item-{{ lineItem.type }}{% if isDiscount %} is-discount{% endif %}{% if isNested %} is-nested{% endif %}{% if isChild %} is-child{% endif %}">
+  <div class="row cart-item-row">
+    <div class="col-10 col-md cart-item-info">
+      <div class="row cart-item-row">
+        <div class="col-auto cart-item-info-img">
+          <div class="cart-item-img-container">
+            {% if lineItem.cover.url %}
+              <img src="{{ lineItem.cover.url }}" width="100px" height="100px"
+                   class="img-fluid cart-item-img"
+                   alt="{{ (lineItem.cover.translated.alt ?: '') }}"
+                   title="{{ (lineItem.cover.translated.title ?: '') }}"/>
+            {% else %}
+              {% sw_icon 'placeholder' style {
+                'size': 'fluid'
+              } %}
+            {% endif %}
+          </div>
+        </div>
+        <div class="col cart-item-details">
+          <div class="cart-item-details-container">
+            <div class="cart-item-label">
+              {{ lineItem.label|u.truncate(60, '...', false) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-4 col-md-2">
+      <div class="cart-item-total-price-label">
+        {{ "checkout.cartHeaderQuantity"|trans|sw_sanitize }}
+      </div>
+      x{{ lineItem.quantity }}
+    </div>
+
+    <div class="col-12 col-sm-4 col-md-2">
+      <div class="cart-item-total-price-label">
+        {{ "checkout.cartHeaderTotalPrice"|trans|sw_sanitize }}
+      </div>
+      {{ lineItem.price.totalPrice|currency }}
+    </div>
+    <div class="col-12 col-sm-4 col-md-2">
+      <button class="btn btn-dark"
+              type="submit"
+              name="productId"
+              value="{{ lineItem.id }}">{{ "kitRma.selectProductReturn"|trans }}
+      </button>
+    </div>
+  </div>
+</div>
+
+{% for lineItem in lineItem.children %}
+  {% sw_include childTemplate with {
+    'isChild': true
+  } %}
+
+{% endfor %}

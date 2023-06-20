@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/master/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>Settings</title>
+        <title lang="de-DE">Einstellungen</title>
+
+        <input-field type="bool">
+            <name>active</name>
+            <label>Active</label>
+            <label lang="de-DE">Aktiviert</label>
+        </input-field>
+
+        <input-field type="text">
+            <name>importFilePath</name>
+            <label>Import file path</label>
+            <helpText>Full path to the import csv file</helpText>
+            <defaultValue>scripte/preisupdate/export.geizhals.at/kunden-download/klarsichtit/x_daten.csv</defaultValue>
+        </input-field>
+
+        <input-field type="text">
+            <name>excludedAffiliates</name>
+            <label>Excluded affiliates / companies</label>
+            <helpText>Enter comma separated pattern to exclude companies from sink evaluation</helpText>
+            <defaultValue>klarsicht</defaultValue>
+        </input-field>
+
+        <input-field type="time">
+            <name>businessHourStart</name>
+            <label>Business hour (start)</label>
+        </input-field>
+
+        <input-field type="time">
+            <name>businessHourEnd</name>
+            <label>Business hour (end)</label>
+        </input-field>
+
+    </card>
+</config>

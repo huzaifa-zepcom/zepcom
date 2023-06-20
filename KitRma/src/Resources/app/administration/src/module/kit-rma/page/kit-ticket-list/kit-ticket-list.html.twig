@@ -1,0 +1,172 @@
+{% block kit_ticket %}
+    <sw-page class="kit-rma--modules-ticket-listing">
+        <template slot="smart-bar-actions">
+            <sw-button :routerLink="createRoute">
+                {{ createRouteText }}
+            </sw-button>
+        </template>
+
+        <template slot="content">
+            <sw-entity-listing
+                    v-if="list"
+                    :items="list"
+                    :showSettings="false"
+                    :allowInlineEdit="false"
+                    detailRoute="kit.rma.ticket_view"
+                    :columns="columns"
+                    :repository="repository"
+                    :showSelection="false"
+                    :isLoading="isLoading">
+
+                <template #column-customerName="{ item }">
+                    {{ getCustomerLabel(item.customer) }}
+                </template>
+
+                <template #column-productName="{ item }">
+                    {{ getProductLabel(item) }}
+                </template>
+
+                <template #column-productNumber="{ item }">
+                    {{ getProductNumber(item) }}
+                </template>
+
+                <template #column-caseName="{ item }">
+                    {{ getCaseLabel(item.case) }}
+                </template>
+
+                <template #column-statusName="{ item }">
+                    <template v-if="item.status">
+                        <sw-color-badge class="kit-rma--status-badge"
+                                        rounded
+                                        :color="item.status.color"></sw-color-badge>
+                        &nbsp; {{ item.status.name }}
+                    </template>
+                </template>
+
+                <template #column-createdAt="{ item }">
+                    {{ item.createdAt | date({ hour: '2-digit', minute: '2-digit' }) }}
+                </template>
+
+            </sw-entity-listing>
+
+            <sw-loader v-if="isLoading"></sw-loader>
+            <sw-empty-state v-if="!isLoading && !list.length"
+                            :title="$tc('kit-rma.general.messageEmpty')">
+            </sw-empty-state>
+        </template>
+
+        <template #sidebar>
+            <sw-sidebar class="sw-cms-sidebar">
+                <sw-sidebar-item
+                        icon="default-arrow-360-left"
+                        :title="$tc('kit-rma.general.reset')"
+                        @click="resetFilter">
+                </sw-sidebar-item>
+
+                <sw-sidebar-item icon="default-action-filter"
+                                 :title="$tc('kit-rma.general.filters')">
+
+                    <sw-description-list>
+                        <dt>{{ $tc('kit-rma.general.filters') }}</dt>
+                        <dd>
+                            <sw-checkbox-field
+                                    :label="$tc('kit-rma.modules.ticket.open')"
+                                    v-model="filterData['open']"
+                                    @change="onlyOpenCases">
+                            </sw-checkbox-field>
+
+                            <sw-entity-single-select
+                                    size="small"
+                                    :criteria="entityCriteria"
+                                    :label="$tc('kit-rma.modules.ticket.status')"
+                                    entity="rma_status"
+                                    v-model="filterData['status']"
+                                    @change="onSelect">
+                            </sw-entity-single-select>
+                        </dd>
+
+                        <dd>
+                            <sw-text-field
+                                    size="small"
+                                    :label="$tc('kit-rma.modules.ticket.order')"
+                                    v-model="filterData['order']"
+                                    @keyup="onEnter">
+                            </sw-text-field>
+                        </dd>
+                        <dd>
+                            <sw-text-field
+                                    size="small"
+                                    :label="$tc('kit-rma.modules.ticket.customerNumber')"
+                                    v-model="filterData['customer']"
+                                    @keyup="onEnter">
+                            </sw-text-field>
+                        </dd>
+                        <dd>
+                            <sw-text-field
+                                    size="small"
+                                    :label="$tc('kit-rma.modules.ticket.productName')"
+                                    v-model="filterData['product']"
+                                    @keyup="onEnter">
+                            </sw-text-field>
+                        </dd>
+                        <dd>
+                            <sw-text-field
+                                    size="small"
+                                    :label="$tc('kit-rma.modules.ticket.serialNumber')"
+                                    v-model="filterData['serial']"
+                                    @keyup="onEnter">
+                            </sw-text-field>
+                        </dd>
+                        <dd>
+                            <sw-text-field
+                                    size="small"
+                                    :label="$tc('kit-rma.modules.ticket.rmaNumber')"
+                                    v-model="filterData['ticket']"
+                                    @keyup="onEnter">
+                            </sw-text-field>
+                        </dd>
+                        <dd>
+                            <sw-text-field
+                                    size="small"
+                                    :label="$tc('kit-rma.modules.ticket.supplierRmaNumber')"
+                                    v-model="filterData['supplierRmaNumber']"
+                                    @keyup="onEnter">
+                            </sw-text-field>
+                        </dd>
+                        <dd>
+                            <sw-entity-single-select
+                                    size="small"
+                                    :criteria="entityCriteria"
+                                    :label="$tc('kit-rma.modules.ticket.supplier')"
+                                    entity="kit_supplier"
+                                    v-model="filterData['supplier']"
+                                    @change="onSelect">
+                            </sw-entity-single-select>
+                        </dd>
+                        <dd>
+                            <sw-entity-single-select
+                                    size="small"
+                                    :label="$tc('kit-rma.modules.ticket.case')"
+                                    entity="rma_case"
+                                    :criteria="entityCriteria"
+                                    v-model="filterData['case']"
+                                    @change="onSelect">
+                            </sw-entity-single-select>
+                        </dd>
+                        <dd>
+                            <sw-entity-single-select
+                                    size="small"
+                                    :label="$tc('kit-rma.modules.ticket.user')"
+                                    entity="user"
+                                    labelProperty="username"
+                                    v-model="filterData['user']"
+                                    @change="onSelect">
+                            </sw-entity-single-select>
+                        </dd>
+                    </sw-description-list>
+                </sw-sidebar-item>
+            </sw-sidebar>
+        </template>
+
+    </sw-page>
+{% endblock %}

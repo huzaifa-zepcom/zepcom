@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="KitAutoPriceUpdate\Components\KitAutoPriceImportService" public="true">
+            <argument id="Shopware\Core\System\SystemConfig\SystemConfigService" type="service" />
+            <argument id="Doctrine\DBAL\Connection" type="service" />
+            <argument type="service" id="service_container" />
+        </service>
+        <service id="KitAutoPriceUpdate\Command\PriceImportCommand">
+            <argument id="KitAutoPriceUpdate\Components\KitAutoPriceImportService" type="service" />
+            <argument type="service" id="KitAutoPriceUpdate\Components\KitAutoPriceService" />
+            <tag name="console.command" />
+        </service>
+        <service id="KitAutoPriceUpdate\Subscriber\FrontendSubscriber">
+            <tag name="kernel.event_subscriber" />
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\AbsolutePriceCalculator" />
+            <argument type="service" id="KitAutoPriceUpdate\Components\KitAutoPriceService" on-invalid="ignore" />
+        </service>
+
+        <service id="KitAutoPriceUpdate\Controller\KitPriceUpdateController" public="true">
+            <tag name="controller.service_arguments"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
+
+        <service id="KitAutoPriceUpdate\Components\KitAutoPriceService" public="true">
+            <argument id="Doctrine\DBAL\Connection" type="service" />
+            <argument id="Shopware\Core\System\SystemConfig\SystemConfigService" type="service" />
+            <argument id="product.repository" type="service" />
+            <argument id="kit_priceupdate.repository" type="service" />
+            <argument id="tax_rule.repository" type="service" />
+        </service>
+
+        <service id="KitAutoPriceUpdate\Content\Repricer\RepricerDefinition">
+            <tag name="shopware.entity.definition" />
+        </service>
+
+        <service id="KitAutoPriceUpdate\Components\OverwrittenPriceCollector">
+            <tag name="shopware.cart.processor"/>
+            <tag name="shopware.cart.collector"/>
+            <argument type="service" id="product.repository" />
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator" />
+            <argument type="service" id="KitAutoPriceUpdate\Components\KitAutoPriceService" />
+        </service>
+
+    </services>
+</container>

@@ -1,0 +1,29 @@
+{
+  "name": "netzturm/birthday-remidner",
+  "description": "Send birthday reminder emails",
+  "type": "shopware-platform-plugin",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Netzturm"
+    }
+  ],
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "NetzBirthdayReminder\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "NetzBirthdayReminder\\NetzBirthdayReminder",
+    "copyright": "Netzturm",
+    "label": {
+      "de-DE": "Birthday Reminder",
+      "en-GB": "Birthday Reminder"
+    },
+    "description": {
+      "de-DE": "Send birthday reminder emails",
+      "en-GB": "Send birthday reminder emails"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{% sw_extends '@Storefront/storefront/page/account/order-history/order-item.html.twig' %}
+
+{% block page_account_order_item_context_menu_reorder_form_button %}
+    {{ parent() }}
+    {% if config('KitRma.config.active') %}
+        <a href="{{ path('frontend.rma.search', {orderId: order.id}) }}"
+           class="order-table-header-context-menu-content-link">{{ "kitRma.selectProductReturn"|trans }}</a>
+    {% endif %}
+{% endblock %}

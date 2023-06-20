@@ -1,0 +1,54 @@
+<sw-page class="kit-text-view">
+    <template slot="smart-bar-actions">
+        <sw-button :routerLink="{ name: 'kit.rma.text_list' }">
+            {{ $tc('kit-rma.general.viewListButton') }}
+        </sw-button>
+
+        <sw-button-process
+                :isLoading="isLoading"
+                :processSuccess="processSuccess"
+                variant="primary"
+                @process-finish="saveFinish"
+                @click="onClickSave">
+            {{ $tc('kit-rma.general.saveButtonText') }}
+        </sw-button-process>
+    </template>
+    <template slot="content">
+        <sw-card-view>
+            <sw-card v-if="text">
+                <sw-field required
+                          :label="$tc('kit-rma.modules.text.name')"
+                          v-model="text.name"
+                          validation="required"></sw-field>
+
+                <sw-single-select
+                        :helpText="$tc('kit-rma.modules.text.help')"
+                        :label="$tc('kit-rma.modules.text.placeholderLabel')"
+                        :value="placeholderText"
+                        @change="insertPlaceholder"
+                        :options="placeholders">
+                </sw-single-select>
+
+                <sw-textarea-field
+                        ref="descriptionTextArea"
+                        required
+                        type="textarea"
+                        v-model="text.description"
+                        :value="text.description"
+                        validation="required"
+                        :label="$tc('kit-rma.modules.text.snippetLabel')"></sw-textarea-field>
+
+                <sw-radio-field
+                        :label="$tc('kit-rma.modules.text.typeLabel')"
+                        bordered
+                        required
+                        v-model="text.type"
+                        :options="[
+                                 {'value': 'A', 'name': 'Antwort'},
+                                 {'value': 'G', 'name': 'Global'}
+                             ]">
+                </sw-radio-field>
+            </sw-card>
+        </sw-card-view>
+    </template>
+</sw-page>

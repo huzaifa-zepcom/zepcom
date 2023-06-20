@@ -1,0 +1,8 @@
+.trash-edge {
+  float: right
+}
+
+dt.is--required:after {
+  color: #189eff;
+  content: ' *';
+}

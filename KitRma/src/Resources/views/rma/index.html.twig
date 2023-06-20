@@ -1,0 +1,172 @@
+{% sw_extends '@Storefront/storefront/page/account/index.html.twig' %}
+
+{% block page_account_main_content %}
+    {% block page_account_rma %}
+        <div class="account-rma">
+            {% block page_account_rma_welcome %}
+                <div class="account-welcome">
+                    {% block page_account_rma_welcome_headline %}
+                        <h1>{{ "kitRma.rmaTitle"|trans|sw_sanitize }}</h1>
+                    {% endblock %}
+
+                    {% block page_account_rma_error %}
+                        {% if error is defined %}
+                            {% set content = ("kitRma.errorMessages." ~ error)|trans|sw_sanitize %}
+                            {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+                                type:"danger",
+                                content: content
+                            } %}
+                        {% endif %}
+                    {% endblock %}
+
+                    {% block page_account_rma_welcome_intro %}
+                        <p>{{ "kitRma.rmaIntro"|trans|sw_sanitize }}</p>
+                    {% endblock %}
+                </div>
+            {% endblock %}
+
+            {% block page_account_rma_main %}
+                <div class="account-rma-card card">
+                    <div class="card-body rmaInput">
+                        {% block page_account_rma_form %}
+                            <form action="{{ path('frontend.rma.search') }}"
+                                  method="post"
+                                  data-form-csrf-handler="true">
+
+                                {% block page_account_rma_form_csrf %}
+                                    {{ sw_csrf('frontend.rma.search') }}
+                                {% endblock %}
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <input type="text"
+                                                   name="zipcode"
+                                                   value=""
+                                                   required
+                                                   class="form-control"
+                                                   placeholder="{{ "kitRma.fields.zipcode.placeholder"|trans }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <input type="text"
+                                                   name="ordernumber"
+                                                   value=""
+                                                   required
+                                                   class="form-control"
+                                                   placeholder="{{ "kitRma.fields.orderNumber.placeholder"|trans }}">
+                                            <div class="input-group-append">
+                                                <button type="submit"
+                                                        class="btn btn-primary">{{ "kitRma.fields.submitButton"|trans }}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        {% endblock %}
+                        {% block page_account_rma_legal %}
+                            <br/>
+                            <div class="legal">
+                                <div class="row col-md-12">
+                                    <p class="text-justify">{{ "kitRma.legal"|trans|sw_sanitize }}</p>
+                                </div>
+                            </div>
+                        {% endblock %}
+                    </div>
+                </div>
+            {% endblock %}
+
+            {% if loggedIn %}
+                {% block page_account_rma_ticket %}
+                    <div class="account-rma-card card">
+                        <div class="card-body">
+                            {% block page_account_rma__ticket_title %}
+                                <h2 class="card-title rma-headline">
+                                    {{ "kitRma.previousComplainsTitle"|trans|sw_sanitize }}
+                                </h2>
+                            {% endblock %}
+
+                            {% block page_account_rma_status_form %}
+                                <form action="" method="post"
+                                      data-form-csrf-handler="true">
+
+                                    {% block page_account_rma_status_csrf %}
+                                        {{ sw_csrf('frontend.rma.index') }}
+                                    {% endblock %}
+
+                                    <div class="input-group" style="display:none">
+                                        <select class="custom-select" name="status_id" id="status_id">
+                                            <option value="">{{ "kitRma.fields.all"|trans }}</option>
+
+                                            {% for key,status in statuses %}
+                                                <option value="{{ key }}"
+                                                        {% if app.request.get('status_id') in key %}selected{% endif %}>
+                                                    {{ status }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary btn-outline-secondary" type="submit"
+                                                    name="submit">Suchen
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            {% endblock %}
+
+                            {% block page_account_rma_ticket_details %}
+                                <div class="rma-table">
+                                    <table class="table table-striped">
+                                        <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Datum</th>
+                                            <th scope="col">Geschäftsfall</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Bestellnummer</th>
+                                            <th scope="col">Produkt</th>
+                                            <th scope="col">Menge</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% if rmaTickets|length > 0 %}
+                                            {% for ticket in rmaTickets %}
+                                                <tr>
+                                                    <th scope="row">
+                                                        <a href="{{ ticket.link }}"
+                                                           class="link">{{ ticket.rmaNumber }}</a>
+                                                    </th>
+                                                    <td>{{ ticket.createdAt|date }}</td>
+                                                    <td>{{ ticket.case.name }}</td>
+                                                    <td>{{ ticket.status.nameExt }}</td>
+                                                    <td>
+                                                        {% if ticket.order is defined %}
+                                                            {{ ticket.order.orderNumber }}
+                                                        {% else %}
+                                                            N/A
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ ticket.product.name|u.truncate(90, '...') }}
+                                                        ({{ ticket.product.productNumber }})
+                                                    </td>
+                                                    <td>{{ ticket.amount }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td class="text-center"
+                                                    colspan="7">{{ "kitRma.fields.empty"|trans }}</td>
+                                            </tr>
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% endblock %}
+                        </div>
+                    </div>
+                {% endblock %}
+            {% endif %}
+        </div>
+    {% endblock %}
+{% endblock %}

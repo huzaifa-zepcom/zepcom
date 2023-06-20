@@ -1,0 +1,22 @@
+{% block kit_ticket_docs %}
+  <sw-data-grid :dataSource="files"
+                :columns="columns"
+                v-if="files"
+                :showSelection="false"
+                :compactMode="false"
+                :showActions="false">
+
+    <template #column-url="{ item }">
+      <a target="_blank" :href="item.url" download>{{ item.url }}</a>
+    </template>
+
+    <template #column-uploaded="{ item }">
+      {{ item.media.uploadedAt | date({
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }) }}, {{ item.media.fileSize | fileSize(locale) }}
+    </template>
+
+  </sw-data-grid>
+{% endblock %}
