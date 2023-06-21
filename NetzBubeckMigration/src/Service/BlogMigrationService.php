@@ -28,22 +28,28 @@ class BlogMigrationService
         $this->blogMediaRepository = $blogMediaRepository;
     }
 
-    public function execute()
+    protected function execute()
     {
         $context = new Context(new SystemSource());
+
+        // Load the blog media data from a CSV file
         $blogMediaArray = array_map('str_getcsv', file(__DIR__ . '/../Database/blog_media.csv'));
 
+        // SQL query to fetch blog article mappings
         $sql = <<<SQL
 SELECT old_identifier, LOWER(HEX(`entity_uuid`)) AS `product_id`
 FROM `swag_migration_mapping`
 WHERE `entity` = 'product_mainProduct'
 SQL;
 
+        // Fetch the blog article mappings from the database
         $blogArticlesArray = $this->connection->fetchAllKeyValue($sql);
         $totalData = [];
 
         $blogIdWithName = [];
         $blogImages = [];
+
+        // Process the blog media data
         array_map(static function ($i) use (&$blogIdWithName, &$blogImages) {
             if (is_numeric($i[2])) {
                 $blogIdWithName[$i[2]] = [
@@ -52,12 +58,12 @@ SQL;
                 ];
 
                 $blogImages[$i[0]][] = $i[2];
-
             }
         }, $blogMediaArray);
 
         $names = array_filter(array_column($blogMediaArray, 3));
 
+        // Fetch the new media IDs based on the file names
         $newMediaIds = $this->connection->fetchAllKeyValue(
             'select file_name, LOWER(HEX(media_id)) as media_id from swag_migration_media_file where file_name in (?)',
             [$names], [Connection::PARAM_STR_ARRAY]
@@ -71,15 +77,15 @@ left join s_blog_media bm on bm.blog_id = b.id
 left join s_blog_tags bt on bt.blog_id = b.id
 SQL;
 
+        // Fetch the blog data from the database
         $blogData = $this->connection->fetchAllAssociative($sql);
 
         foreach ($blogData as $blog) {
-
             $blogUuid = Uuid::fromStringToHex($blog['blog_id']);
             $mediaCriteria = new Criteria();
             $mediaCriteria->addFilter(new EqualsFilter('blogid', $blogUuid));
 
-            // Delete existing duplicate entries.
+            // Delete existing duplicate entries
             $allMediaIds = $this->blogMediaRepository->searchIds($mediaCriteria, $context)->getIds();
             foreach ($allMediaIds as $str) {
                 $this->blogMediaRepository->delete([['id' => $str]], $context);
@@ -131,8 +137,6 @@ SQL;
                         if (isset($newMediaIds[$imageName]) && !$image['preview']) {
                             $blogMedia[] = ['mediaId' => $newMediaIds[$imageName], 'number' => $mediaNumber++];
                         }
-
-
                     }
                 }
 
@@ -145,9 +149,11 @@ SQL;
         }
 
         if ($totalData) {
+            // Upsert the blog data
             $this->blogRepository->upsert($totalData, $context);
         }
     }
+
 
     public static function slugify($str, $options = array()) {
         // Make sure string is in UTF-8 and strip invalid UTF-8 characters

@@ -66,6 +66,8 @@ class Config3dPluginService
             }
 
 
+            // Check the try attempt number, and adjust the interval in multiple
+            // so for e.g. we try the attempt, and if it fails, then we try it after x 2
             $offset = $record->getTryAttemptNumber() ?? 0;
             $nextTry = $offset === 0 ? 1 : $offset * 2;
 
@@ -144,6 +146,8 @@ class Config3dPluginService
     {
         $io->title('Cleaning old records ...');
         $context = Context::createDefaultContext();
+
+        // Fetch the configuration of x Days after which the old records are deleted to make space in DB
         $xDays = (int)$this->configService->get('Config3d.config.deleteAfterDays');
         $interval = new DateInterval('P' . $xDays . 'D');
         $limitDate = (new \DateTimeImmutable)->sub($interval);

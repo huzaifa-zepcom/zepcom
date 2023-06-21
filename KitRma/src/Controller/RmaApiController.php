@@ -100,39 +100,59 @@ class RmaApiController extends AbstractController
     public function ticket(Request $request, Context $context): JsonResponse
     {
         $isNew = false;
-        $params = $request->request->all();
-        $oldTicket = $params['old'] ?? [];
-        $ticket = $ticketData = $params['ticket'];
-        $userId = $context->getSource() instanceof AdminApiSource ? $context->getSource()->getUserId() : null;
-        // if there is no hash, means it is created for the first time, so we also create the link and hash here
 
+        // Retrieve the request parameters
+        $params = $request->request->all();
+
+        // Extract the old ticket data (if available)
+        $oldTicket = $params['old'] ?? [];
+
+        // Retrieve the ticket data
+        $ticket = $ticketData = $params['ticket'];
+
+        // Determine the user ID based on the source (Admin API or null for other sources)
+        $userId = $context->getSource() instanceof AdminApiSource ? $context->getSource()->getUserId() : null;
+
+        // Check if the ticket is being created for the first time
         if ($oldTicket) {
             if (empty($ticket['hash'])) {
                 $isNew = true;
+
+                // Generate a new RMA number and assign it to the ticket
                 $rmaNumber = $this->createRmaNumber();
                 $ticket['rmaNumber'] = $rmaNumber;
-                $ticket['ticketSerialNumber'] = (int)explode('-', $rmaNumber)[1];
+                $ticket['ticketSerialNumber'] = (int) explode('-', $rmaNumber)[1];
+
+                // Create a new hash and assign it to the ticket
                 $ticket['hash'] = $this->createNewHash($rmaNumber);
+
+                // Create a link based on the RMA number and hash
                 $ticket['link'] = $this->createLink($rmaNumber, $ticket['hash']);
+
+                // Assign the user ID to the ticket
                 $ticket['userId'] = $userId;
             }
         } else {
+            // Generate a temporary RMA number for a new ticket
             $rmaNumber = 'TEMP-' . Random::getInteger(10000, 999999);
             $ticket['rmaNumber'] = $rmaNumber;
         }
 
+        // Retrieve the ticket content or generate it with serial numbers
         $ticketContent = $ticket['ticketContent'] ?? $this->addSerialNumberInTicket($ticket, $context);
 
-        if($ticketContent && \is_array($ticketContent)) {
-            $serialNumbersContent = \array_filter($ticketContent, static function($tc) {
-               return $tc['type'] === 'serial' && !empty($tc['value']);
+        // Extract product serial numbers from the ticket content
+        if ($ticketContent && \is_array($ticketContent)) {
+            $serialNumbersContent = \array_filter($ticketContent, static function ($tc) {
+                return $tc['type'] === 'serial' && !empty($tc['value']);
             });
             $ticket['productSerialNumbers'] = \array_column($serialNumbersContent, 'value');
         }
 
+        // Update the ticket with the modified ticket content
         $ticket['ticketContent'] = $ticketContent;
 
-        // unset irrelevant association data
+        // Remove irrelevant association data from the ticket
         unset(
             $ticket['product'],
             $ticket['order'],
@@ -144,15 +164,23 @@ class RmaApiController extends AbstractController
             $ticket['serialNumbers']
         );
 
+        // Get the badge text based on the product ID or assign an empty string
         $badgeText = isset($ticket['productId']) ? $this->getBadgeText($ticket['productId'], $context) : '';
         $ticket['badges'] = $ticket['badges'] ?? $badgeText;
+
+        // Upsert (create or update) the ticket
         $this->upsertTicket($ticket, $context);
+
+        // Retrieve the ticket entity based on the RMA number
         $ticketEntity = $this->getTicketByRmaNumber($context, $ticket['rmaNumber']);
         if (!$ticketEntity) {
             throw new RuntimeException('No ticket found');
         }
+
+        // Get the ticket information based on the ticket entity
         $info = $this->getTicketInfo($ticketEntity, $context);
 
+        // Send email notification for a new ticket
         if ($isNew) {
             $mailTemplate = $this->getMailTemplate($context, 'kit.rma.external');
             if ($mailTemplate !== null) {
@@ -168,6 +196,7 @@ class RmaApiController extends AbstractController
             }
         }
 
+        // Extract attachments and media IDs from the ticket data
         $attachments = [];
         $mediaIds = [];
         if (isset($ticketData['attachments'])) {
@@ -179,6 +208,7 @@ class RmaApiController extends AbstractController
             }
         }
 
+        // Add a history entry for the ticket status change
         if ($oldTicket && $oldTicket['statusId'] && $oldTicket['statusId'] !== $ticket['statusId']) {
             $oldStatus = $this->getStatusById($context, $oldTicket['statusId']);
             $newStatus = $this->getStatusById($context, $ticket['statusId']);
@@ -200,6 +230,7 @@ class RmaApiController extends AbstractController
             $this->addHistory($historyData, $context);
         }
 
+        // Add a history entry for the ticket case change
         if ($oldTicket && $oldTicket['caseId'] && $oldTicket['caseId'] !== $ticket['caseId']) {
             $oldCase = $this->getCaseById($context, $oldTicket['caseId']);
             // If the old case does exist
@@ -237,7 +268,7 @@ class RmaApiController extends AbstractController
             }
         }
 
-        // replace placeholder variables with their data.
+        // Replace placeholder variables with their corresponding data in the ticket message
         if (isset($ticketData['message']) && $ticketData['message']) {
             $message = str_replace(
                 [
@@ -274,7 +305,8 @@ class RmaApiController extends AbstractController
             );
 
             $message = nl2br($message);
-            // External communication to customer
+
+            // Add a history entry for external communication to the customer
             $historyData = [
                 'id' => Uuid::randomHex(),
                 'ticketId' => $ticketEntity->getId(),
@@ -289,6 +321,7 @@ class RmaApiController extends AbstractController
 
             $this->addHistory($historyData, $context);
 
+            // Send an email notification for external communication
             if ($historyData['type'] === Utility::TYPE_EXTERNAL) {
                 $mailTemplate = $this->getMailTemplate($context, 'kit.rma.external.answer');
                 if ($mailTemplate !== null) {
@@ -304,21 +337,9 @@ class RmaApiController extends AbstractController
                     $this->sendMail($context, $mailTemplate, $emailData);
                 }
             }
-            /* Do not send email for internal comments */
-            // elseif ($historyData['type'] === Utility::TYPE_INTERNAL) {
-            //     $mailTemplate = $this->getMailTemplate($context, 'kit.rma.internal.answer');
-            //     if ($mailTemplate !== null) {
-            //         $emailData = [
-            //             'rma' => $info,
-            //             'text' => $message,
-            //             'senderEmail' => self::NO_REPLY_EMAIL,
-            //             'mediaIds' => $mediaIds,
-            //         ];
-            //         $this->sendMail($context, $mailTemplate, $emailData);
-            //     }
-            // }
         }
 
+        // Return the ticket information as a JSON response
         return new JsonResponse($info);
     }
 
@@ -340,24 +361,34 @@ class RmaApiController extends AbstractController
 
     private function addSerialNumberInTicket(array $ticket, Context $context): array
     {
+        // Retrieve the case entity based on the case ID in the ticket
         $case = $this->getCaseById($context, $ticket['caseId']);
+
+        // Retrieve the serial numbers from the ticket
         $serialNumbers = $ticket['serialNumbers'];
+
+        // If no serial numbers are provided, return an empty array
         if (!$serialNumbers) {
             return [];
         }
 
         $freetextFormValues = [];
-        // If freetext fields are there, we loop through them to create the array. Each field can have
-        // dependency on the line item amount, so we adjust the array accordingly.
+
+        // If freetext fields exist in the case, process them to create the array
         if ($case && $case->getFreetext()) {
             foreach ($case->getFreetext() as $key => $value) {
+                // Convert the name to a field name
                 $value['name'] = Utility::convertNameToFieldName($value['name']);
+
                 if ($value['dependOnAmount']) {
+                    // Loop through each line item based on the ticket amount
                     for ($i = 0; $i < $ticket['amount']; $i++) {
+                        // Generate the label for the freetext field
                         $freetextFieldLabel = Utility::cleanString(sprintf('%s %d', $value['name'], $i + 1));
                         $value['label'] = $freetextFieldLabel;
 
                         if ($value['type'] === 'serial') {
+                            // Assign the serial number value from the ticket to the field
                             $fieldValue = $serialNumbers[$i];
                             $value['value'] = $fieldValue;
                         }
@@ -365,10 +396,12 @@ class RmaApiController extends AbstractController
                         $freetextFormValues[] = $value;
                     }
                 } else {
+                    // Generate the label for the freetext field
                     $freetextFieldLabel = Utility::cleanString($value['name']);
                     $value['label'] = $freetextFieldLabel;
 
                     if ($value['type'] === 'serial') {
+                        // Assign the serial number value from the ticket to the field
                         $fieldValue = $serialNumbers[0];
                         $value['value'] = $fieldValue;
                     }
@@ -380,4 +413,5 @@ class RmaApiController extends AbstractController
 
         return $freetextFormValues;
     }
+
 }

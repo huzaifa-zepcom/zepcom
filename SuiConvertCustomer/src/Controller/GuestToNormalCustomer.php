@@ -43,6 +43,7 @@ class GuestToNormalCustomer extends StorefrontController
      */
     public function indexRoute(string $id, string $deepLinkCode, Request $request, SalesChannelContext $context): Response
     {
+        // Load the page and set the robots meta tag to 'nofollow,noindex'
         $page = $this->genericPageLoader->load($request, $context);
         $meta = $page->getMetaInformation();
         if ($meta) {
@@ -57,12 +58,15 @@ class GuestToNormalCustomer extends StorefrontController
             'page' => $page
         ];
 
+        // Check if the feature is active
         $active = $this->configService->get('SuiConvertCustomer.config.active', $context->getSalesChannelId());
         if (!$active) {
             return $this->renderStorefront($template, $data);
         }
 
+        // Check the deep link code and customer ID
         if ($deepLinkCode && $id && Uuid::isValid($id)) {
+            // Get the customer from the order hash and deep link code
             $customer = $this->getCustomerFromOrderHash($id, $deepLinkCode, $context->getContext());
 
             if ($customer) {
@@ -88,6 +92,7 @@ class GuestToNormalCustomer extends StorefrontController
         try {
             $customerPasswordRequest = $request->get('guestPass');
             if ($customerPasswordRequest) {
+                // Modify the customer's password and set the guest flag to false
                 $modifiedCustomer = [
                     'id' => $id,
                     'password' => $request->get('password'),
@@ -113,6 +118,7 @@ class GuestToNormalCustomer extends StorefrontController
 
         return $response;
     }
+
 
     public function getCustomerFromOrderHash(string $customerId, string $hash, Context $context): ?CustomerEntity
     {

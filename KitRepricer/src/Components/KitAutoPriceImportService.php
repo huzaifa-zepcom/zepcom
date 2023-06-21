@@ -81,11 +81,14 @@ class KitAutoPriceImportService
         $results = Utility::getCsvFormattedData($filePath);
 
         $this->log('Import', 'Found ' . count($results) . ' records');
+
         $columns[] = 'id';
         $columns[] = 'product_id';
         $columns[] = 'geizhalsID';
         $columns[] = 'geizhalsArtikelname';
         $columns[] = 'meinPreis';
+
+        // Add columns for price, provider, and lz (repeated 10 times)
         for ($i = 1; $i <= 10; $i++) {
             $columns[] = 'price' . $i;
             $columns[] = 'anbieter' . $i;
@@ -99,16 +102,21 @@ class KitAutoPriceImportService
         foreach ($results as $key => $row) {
             try {
                 $productId = $this->getProductIdByNumber($row['MeineArtikelnummer']);
+
                 if (!$productId) {
                     continue;
                 }
+
                 $temp['id'] = Uuid::fromHexToBytes(md5($row['MeineArtikelnummer']));
                 $temp['product_id'] = $productId;
                 $row = $temp + $row;
-                // date/time is not needed as we are saving the current timestamp in DB
+
+                // Remove unnecessary columns
                 unset($row['UpdateDatum'], $row['UpdateUhrzeit']);
+
                 $payload[] = $row;
             } catch (Exception $e) {
+                // Handle exception if needed
             }
         }
 
@@ -118,6 +126,7 @@ class KitAutoPriceImportService
         $totalRecords = count($payload);
         $counter = 0;
         $processed = 0;
+
         foreach ($payload as $key => $row) {
             $insertQuery = [];
 
@@ -134,18 +143,20 @@ class KitAutoPriceImportService
             if ($counter === 0 && !$this->connection->isTransactionActive()) {
                 $this->connection->beginTransaction();
             }
+
             try {
                 $values[] = (new DateTime())->format(Defaults::STORAGE_DATE_TIME_FORMAT);
                 $params = implode(', ', $placeholder);
+
                 $sql = sprintf(
                     'INSERT INTO kit_priceupdate (%s) VALUES %s',
                     $columnValues,
                     $params
                 );
+
                 $stmt = $this->connection->prepare($sql);
                 $stmt->execute($values);
                 $counter++;
-                // Utility::progressBar($counter, $totalRecords);
 
                 if ($counter === 500) {
                     $processed += $counter;
@@ -153,6 +164,7 @@ class KitAutoPriceImportService
                     $this->connection->commit();
                     $counter = 0;
                 }
+
                 $placeholder = [];
                 $values = [];
             } catch (Exception $e) {
@@ -172,6 +184,7 @@ class KitAutoPriceImportService
         $this->log('Import', sprintf('%s out of %s records processed', $processed, $totalRecords));
         echo PHP_EOL;
     }
+
 
     private function getConfig(string $config)
     {

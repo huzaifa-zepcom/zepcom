@@ -52,6 +52,8 @@ class Config3dSubscriber implements EventSubscriberInterface
                 return;
             }
 
+            // We create a new lineItem ID here because we want to be able to order different configurations
+            // of the same article. By default, it would increase the quantity instead of creating a new line item
             if (!$isEdit) {
                 $lineItem->setId(Uuid::randomHex());
             }
@@ -80,6 +82,7 @@ class Config3dSubscriber implements EventSubscriberInterface
                 continue;
             }
 
+            // We save the info in the custom table which will be synced via command
             $configData = [
                 'customerOrderReference' => sprintf('%s_%s', $order->getOrderNumber(), $k++),
                 'customerPrice' => $lineItem->getTotalPrice(),

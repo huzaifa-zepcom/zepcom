@@ -26,6 +26,7 @@ class Config3dProcessor implements CartProcessorInterface
         SalesChannelContext $context,
         CartBehavior $behavior
     ): void {
+        // Here we check if the item has a changed config, if so, we set the new config in the payload
         foreach ($toCalculate->getLineItems()->getFlat() as $lineItem) {
             if ($this->session->has($lineItem->getId())) {
                 $config3d = $this->session->get($lineItem->getId());

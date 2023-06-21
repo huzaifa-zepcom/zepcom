@@ -60,23 +60,36 @@ class FrontendSubscriber implements EventSubscriberInterface
 
     public function onProduct(SalesChannelEntityLoadedEvent $event): void
     {
+        // Get the sales channel context from the event
         $salesContext = $event->getSalesChannelContext();
+
+        // Determine if the current customer group displays gross prices
         $customerGross = $salesContext->getCurrentCustomerGroup()->getDisplayGross();
+
+        // Check if the customer is a PVG customer, and if not, return early
         $isCustomerPVG = $this->isCustomerPVG($event);
         if (!$isCustomerPVG) {
             return;
         }
 
-        /** @var SalesChannelProductEntity $productEntity */
+        // Loop through each product entity in the event entities
         foreach ($event->getEntities() as $productEntity) {
+            // Check if the product entity has a price
             if (!$productEntity->getPrice()) {
                 continue;
             }
 
             $calculatedPrice = null;
+
+            // Get the first price of the product entity
             $price = $productEntity->getPrice()->first();
+
+            // Get the PVG price for the product
             $pvgPrice = KitAutoPriceService::getPvgPriceFromProduct($productEntity);
+
+            // Check if both the price and PVG price exist
             if ($price && $pvgPrice) {
+                // Calculate the gross price and country tax based on the product and sales channel context
                 $grossPriceData = $this->autoPriceService->calculateGrossPriceBasedOnCountryTax(
                     $productEntity,
                     $salesContext
@@ -84,21 +97,30 @@ class FrontendSubscriber implements EventSubscriberInterface
                 $gross = $grossPriceData['gross'];
                 $countryTax = $grossPriceData['countryTax'];
 
+                // Calculate the net price based on the gross price and country tax
                 $net = $gross / $countryTax;
+
+                // Update the gross and net prices of the price object
                 $price->setGross($gross);
                 $price->setNet($net);
 
+                // Create a new PriceCollection with the updated price
                 $priceCollection = new PriceCollection([$price]);
+
+                // Calculate the final price based on the customer's display preference, the product's calculated prices, and the sales channel context
                 $calculatedPrice = $this->priceCalculator->calculate(
                     ($customerGross ? $gross : $net),
                     $productEntity->getCalculatedPrices(),
                     $salesContext
                 );
+
+                // Update the calculated price and price collection of the product entity
                 $productEntity->setCalculatedPrice($calculatedPrice);
                 $productEntity->setPrice($priceCollection);
             }
         }
     }
+
 
     /**
      * Route cache method updates the cache if HTTP_CACHE is enabled, so the price shown is not cached on the page.
@@ -119,6 +141,9 @@ class FrontendSubscriber implements EventSubscriberInterface
         $event->setParts($parts);
     }
 
+    /**
+     * We check through this function if the customer is PVG customer, as those customers see a different price
+     */
     private function isCustomerPVG(ShopwareSalesChannelEvent $event): bool
     {
         $customer = $event->getSalesChannelContext()->getCustomer();

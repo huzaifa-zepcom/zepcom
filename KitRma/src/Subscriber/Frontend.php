@@ -37,20 +37,27 @@ class Frontend implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
+        // Get the domain from the configuration
         $domain = @$this->configService['KitRma.config.domain'];
 
+        // Get the current URL
         $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+        // Create the old URL to redirect to
         $oldurl = 'https://' . $domain . '.klarsicht-it.de';
-        $redirect = 0;
-        foreach ($request->attributes as $k => $a) {
-            if ($k == "resolved-uri") {
-                if ($a == '/Rma') {
-                    $breakr_url = explode('/Rma', $actual_link);
-                    $oldurl .= '/Rma' . $breakr_url[1];
-                    header("Location: $oldurl");
-                    die;
-                }
-            }
+
+        // Check if the current URL contains '/Rma'
+        if (strpos($actual_link, '/Rma') !== false) {
+            // Extract the path after '/Rma'
+            $breakr_url = explode('/Rma', $actual_link);
+
+            // Append the extracted path to the old URL
+            $oldurl .= '/Rma' . $breakr_url[1];
+
+            // Perform the redirect
+            header("Location: $oldurl");
+            die;
         }
     }
+
 }

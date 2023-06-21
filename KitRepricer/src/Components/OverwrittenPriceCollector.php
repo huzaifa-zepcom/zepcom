@@ -59,29 +59,38 @@ class OverwrittenPriceCollector implements CartDataCollectorInterface, CartProce
 
     public function process(CartDataCollection $data, Cart $original, Cart $toCalculate, SalesChannelContext $context, CartBehavior $behavior): void
     {
+        // Filter line items of type PRODUCT_LINE_ITEM_TYPE
         $lineItems = $toCalculate->getLineItems()->filterType(LineItem::PRODUCT_LINE_ITEM_TYPE);
 
         foreach ($lineItems as $lineItem) {
+            // Build a key based on the line item's referenced ID
             $key = $this->buildKey($lineItem->getReferencedId());
 
+            // Check if the key exists in the data collection or its value is null
             if (!$data->has($key) || $data->get($key) === null) {
+                // Continue to the next iteration if the key is not found or the value is null
                 continue;
             }
 
+            // Determine if the customer group displays gross prices
             $customerGross = $context->getCurrentCustomerGroup()->getDisplayGross();
 
+            // Create a new QuantityPriceDefinition based on the line item's payload values
             $definition = new QuantityPriceDefinition(
-                (float)($customerGross ? $lineItem->getPayloadValue('pvgPrice') : $lineItem->getPayloadValue('pvgPriceNet')),
+                (float) ($customerGross ? $lineItem->getPayloadValue('pvgPrice') : $lineItem->getPayloadValue('pvgPriceNet')),
                 $lineItem->getPrice()->getTaxRules(),
                 $lineItem->getPrice()->getQuantity()
             );
 
+            // Calculate the price based on the definition and the context
             $calculated = $this->calculator->calculate($definition, $context);
 
+            // Update the line item's price and price definition
             $lineItem->setPrice($calculated);
             $lineItem->setPriceDefinition($definition);
         }
     }
+
 
     private function filterAlreadyFetchedPrices(LineItemCollection $products, CartDataCollection $data): array
     {

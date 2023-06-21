@@ -25,18 +25,22 @@ class StoreLocatorMigrationService
     {
         $context = Context::createDefaultContext();
         $data = [];
+
+        // SQL query to fetch country mappings
         $sql = <<<SQL
 SELECT old_identifier, LOWER(HEX(`entity_uuid`)) AS `country_id`
 FROM `swag_migration_mapping`
 WHERE `entity` = 'country'
 SQL;
 
+        // Fetch the country mappings from the database
         $countryMapping = $this->connection->fetchAllKeyValue($sql);
+
+        // Fetch the store data from the database
         $storeData = $this->connection->fetchAllAssociative('SELECT * FROM `s_neti_storelocator`');
 
         foreach ($storeData as $row) {
-
-            if(!$row['countryID']) {
+            if (!$row['countryID']) {
                 $row['countryID'] = 2;
             }
 
@@ -71,8 +75,9 @@ SQL;
         }
 
         if ($data) {
+            // Upsert the store data
             $this->storeRepository->upsert($data, $context);
         }
-
     }
+
 }

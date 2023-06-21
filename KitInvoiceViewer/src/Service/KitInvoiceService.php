@@ -36,19 +36,21 @@ class KitInvoiceService
 
     private function getAllInvoices(): array
     {
-        $invoices = [];
-        $folder = $this->getImportFolder();
+        $invoices = []; // Initialize an empty array to store invoice file paths
+        $folder = $this->getImportFolder(); // Get the import folder path
+
         $directory_iterator = new RecursiveDirectoryIterator($folder);
         $iterator = new RecursiveIteratorIterator($directory_iterator);
         $regex_iterator = new RegexIterator($iterator, self::INVOICE_PATTERN);
         $regex_iterator->setFlags(RegexIterator::USE_KEY);
-        /** @var SplFileInfo $file */
+
         foreach ($regex_iterator as $file) {
-            $invoices[] = $file->getPathname();
+            $invoices[] = $file->getPathname(); // Add the file's pathname to the invoices array
         }
 
-        return $invoices;
+        return $invoices; // Return the array of invoice file paths
     }
+
 
     public function getInvoicesForOrder(string $orderNumber): array
     {
@@ -79,32 +81,37 @@ SQL;
 
     public function generateMapping(): int
     {
-        $count = 0;
-        $this->connection->beginTransaction();
-        $this->connection->executeStatement('TRUNCATE TABLE `kit_invoice`');
+        $count = 0; // Initialize a counter variable
+        $this->connection->beginTransaction(); // Start a database transaction
+        $this->connection->executeStatement('TRUNCATE TABLE `kit_invoice`'); // Truncate the "kit_invoice" table
+
         try {
-            $allInvoice = $this->getAllInvoices();
+            $allInvoice = $this->getAllInvoices(); // Get all invoice file paths
             foreach ($allInvoice as $invoice) {
-                preg_match(self::INVOICE_PATTERN, $invoice, $matches);
-                $matchedInvoice = $matches[0] ?? null;
+                preg_match(self::INVOICE_PATTERN, $invoice, $matches); // Match the invoice pattern against the file path
+                $matchedInvoice = $matches[0] ?? null; // Extract the matched invoice number
+
                 if ($matchedInvoice) {
-                    $orderInvoice = explode('.', $matchedInvoice);
+                    $orderInvoice = explode('.', $matchedInvoice); // Split the invoice number and extension
                     if (isset($orderInvoice[0])) {
+                        // Insert a new row in the "kit_invoice" table with relevant data
                         $this->connection->insert('kit_invoice', [
                             'id' => Uuid::fromHexToBytes(md5(basename($invoice))),
                             'order_number' => $orderInvoice[0],
                             'file_name' => $invoice
                         ]);
-                        $count++;
+
+                        $count++; // Increment the counter
                     }
                 }
             }
-            $this->connection->commit();
+
+            $this->connection->commit(); // Commit the transaction
         } catch (\Exception $e) {
-            $count = 0;
-            $this->connection->rollBack();
+            $count = 0; // Reset the counter to 0
+            $this->connection->rollBack(); // Rollback the transaction
         }
 
-        return $count;
+        return $count; // Return the count of inserted rows
     }
 }

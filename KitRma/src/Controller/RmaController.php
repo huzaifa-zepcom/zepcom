@@ -125,13 +125,16 @@ class RmaController extends StorefrontController
      */
     public function indexRoute(Request $request, SalesChannelContext $context): Response
     {
+        // Initialize the data array
         $data['page'] = $this->getPageData($request, $context);
         $data['loggedIn'] = false;
 
+        // Check if the KitRma plugin is active for the current sales channel
         if (!$this->getConfig($context->getSalesChannel()->getId(), 'active')) {
             throw new PluginNotActivatedException('KitRma');
         }
 
+        // Handle error parameter in the request
         if ($request->get('error')) {
             return $this->renderStorefront(
                 '@KitRma/rma/index.html.twig',
@@ -142,25 +145,37 @@ class RmaController extends StorefrontController
             );
         }
 
+        // Check if the customer is logged in
         if ($context->getCustomer()) {
             $data['loggedIn'] = true;
+
+            // Retrieve the RMA statuses
             $statuses = $this->getRmaStatus($context->getContext());
+
+            // Prepare the search status and status array
             $searchStatus = $statusArray = [];
+
             /** @var RmaStatusEntity $status */
             foreach ($statuses as $status) {
                 $searchStatus[$status->getNameExt()][] = $status->getId();
             }
+
             foreach ($searchStatus as $name => $ids) {
                 $statusArray[implode(',', $ids)] = $name;
             }
+
             $data['statuses'] = $statusArray;
+
+            // Retrieve the RMA tickets for the customer
             $rmaTickets = $this->getRmaTickets($request, $context->getCustomer(), $context->getContext());
 
             $data['rmaTickets'] = $rmaTickets;
         }
 
+        // Render the storefront view with the data
         return $this->renderStorefront('@KitRma/rma/index.html.twig', $data);
     }
+
 
     public function getPageData(Request $request, SalesChannelContext $context)
     {
@@ -210,33 +225,54 @@ class RmaController extends StorefrontController
      */
     public function searchRoute(Request $request, SalesChannelContext $context): Response
     {
+        // Check if the KitRma plugin is active for the current sales channel
         if (!$this->getConfig($context->getSalesChannel()->getId(), 'active')) {
             throw new RouteNotFoundException();
         }
 
+        // Merge request data from POST and GET methods
         $data = $request->request->all();
         $data = array_merge($data, $request->query->all());
+
+        // Get page data
         $data['page'] = $this->getPageData($request, $context);
+
+        // Get the context
         $ctx = $context->getContext();
+
+        // Get the order criteria based on the data
         $criteria = $this->getOrderCriteria($data);
+
+        // Get the order repository
         $orderRepository = $this->container->get('order.repository');
 
+        // Search for the order based on the criteria
         /** @var OrderEntity $order */
         $order = $orderRepository->search($criteria, $ctx)->first();
+
+        // If the order is not found, show an error message
         if ($order === null) {
             return $this->showError(ErrorConstants::ORDER_NOT_FOUND);
         }
 
+        // Set the order ID, order number, and customer name in the data
         $data['orderId'] = $order->getId();
         $data['ordernumber'] = $order->getOrderNumber();
         $data['customername'] = $this->getCustomerNameFromOrder($context->getContext(), $order);
+
+        // Store the data in the session
         $request->getSession()->set('kitRma', $data);
 
+        // Get the line items of the order
         $lineItems = $order->getLineItems();
+
+        // Add the line items to the data
         $data['products'] = $lineItems;
 
+        // Render the storefront view with the data
         return $this->renderStorefront('@KitRma/rma/search.html.twig', $data);
     }
+
 
     private function getOrderCriteria(array $data): Criteria
     {
@@ -273,26 +309,39 @@ class RmaController extends StorefrontController
      */
     public function complainRoute(Request $request, SalesChannelContext $context): ?Response
     {
+        // Check if the KitRma plugin is active for the current sales channel
         if (!$this->getConfig($context->getSalesChannel()->getId(), 'active')) {
             throw new RouteNotFoundException();
         }
 
+        // Get the context and retrieve the session data for kitRma
         $ctx = $context->getContext();
         $data = $request->getSession()->get('kitRma', []);
+
+        // Get page data
         $data['page'] = $this->getPageData($request, $context);
 
+        // Get the product ID from the request
         $productId = $request->get('productId');
+
+        // Get the order repository and criteria
         $orderRepository = $this->container->get('order.repository');
         $criteria = $this->getOrderCriteria($data);
+
+        // Search for the order based on the criteria
         /** @var OrderEntity $order */
         $order = $orderRepository->search($criteria, $ctx)->first();
 
+        // If the product ID or line items are not available, show an error message
         if (!$productId || !$order->getLineItems()) {
             return $this->showError(ErrorConstants::PRODUCT_NOT_EXISTS);
         }
 
+        // Set the order ID and order number in the data
         $data['orderId'] = $order->getId();
         $data['ordernumber'] = $order->getOrderNumber();
+
+        // Get the line item from the order based on the product ID
         $orderItem = $this->getLineItemFromProductId($order, $productId);
         if (!$orderItem) {
             $lineItem = $order->getLineItems()->get($productId);
@@ -300,17 +349,20 @@ class RmaController extends StorefrontController
             $lineItem = $order->getLineItems()->filterByProperty('productId', $productId)->first();
         }
 
-        $data['productName'] = $lineItem ? $lineItem->getLabel() : '';
-
+        // If the line item is not found, show an error message
         if (!$lineItem) {
             return $this->showError(ErrorConstants::PRODUCT_NOT_EXISTS);
         }
 
+        // Set the product name, product ID, and quantity in the data
+        $data['productName'] = $lineItem ? $lineItem->getLabel() : '';
         $data['productId'] = $lineItem->getProductId() ?? $lineItem->getId();
         $data['qty'] = $lineItem->getQuantity();
+
+        // Check if a ticket already exists for the order and line item
         $ticket = $this->getTicketByIds($context->getContext(), $order->getId(), $lineItem);
 
-        // If ticket is already created, just show the ticket view instead.
+        // If a ticket exists, redirect to the ticket view
         if ($ticket) {
             $hash = $ticket->getHash();
             $status = $ticket->getStatus();
@@ -324,9 +376,11 @@ class RmaController extends StorefrontController
             return $this->forwardToRoute('frontend.rma.ticket.view', $params);
         }
 
+        // Get the cases and add them to the data
         $cases = $this->getCases($context->getContext());
         $data['cases'] = $cases;
 
+        // Render the storefront view with the data
         return $this->renderStorefront('@KitRma/rma/complain.html.twig', $data);
     }
 
@@ -383,6 +437,8 @@ class RmaController extends StorefrontController
         $returnAddress = '';
         $productName = '';
         $rmaId = $this->createRmaNumber();
+
+        // Get the case by ID
         $case = $this->getCaseById($context->getContext(), $caseId);
         if ($case) {
             $data['case'] = $case;
@@ -400,28 +456,36 @@ class RmaController extends StorefrontController
         $criteria = $this->getOrderCriteria($data);
         $orderRepository = $this->container->get('order.repository');
 
+        // Search for the order based on the criteria
         /** @var OrderEntity $order */
         $order = $orderRepository->search($criteria, $ctx)->first();
+
+        // If the order is found
         if ($order) {
             $orderCustomer = $order->getOrderCustomer();
 
+            // If line items are not available or empty, show an error message
             if (!$order->getLineItems() || !$order->getLineItems()->count()) {
                 return $this->showError(ErrorConstants::PRODUCT_NOT_FOUND);
             }
 
+            // Get the line item from the order based on the product ID
             $orderItem = $order->getLineItems()->filterByProperty('productId', $productId)->first();
             if (!$orderItem) {
                 $orderItem = $order->getLineItems()->get($productId);
             }
 
+            // If the line item is not found, show an error message
             if (!$orderItem) {
                 return $this->showError(ErrorConstants::PRODUCT_NOT_EXISTS);
             }
 
+            // Check if the requested amount exceeds the available quantity of the line item
             if ($orderItem->getQuantity() < $amount) {
                 return $this->showError(ErrorConstants::PRODUCT_AMOUNT);
             }
 
+            // Get the customer from the order
             if (!$orderCustomer) {
                 return $this->showError(ErrorConstants::CUSTOMER_NOT_FOUND);
             }
@@ -431,6 +495,7 @@ class RmaController extends StorefrontController
                 return $this->showError(ErrorConstants::CUSTOMER_NOT_FOUND);
             }
 
+            // Get the product and set relevant data
             $product = $orderItem->getProduct();
             $data['product'] = $product;
             $productName = $product ? $product->getName() : $orderItem->getLabel();
@@ -444,6 +509,7 @@ class RmaController extends StorefrontController
             $ordernumber = $order->getOrderNumber();
             $ticket = $this->getTicketByIds($context->getContext(), $orderId, $orderItem);
 
+            // Get the supplier ID and return address
             $productCustomFields = $product ? $product->getCustomFields() : [];
             $supplierId = $productCustomFields['kit_product_supplier_id'] ?? null;
             if ($supplierId) {
@@ -454,6 +520,7 @@ class RmaController extends StorefrontController
             }
         }
 
+        // If a ticket already exists for the order and line item, redirect to the ticket view
         if ($ticket) {
             $hash = $ticket->getHash();
             if ($request->get('id') &&
@@ -476,12 +543,14 @@ class RmaController extends StorefrontController
         $data['ordernumber'] = $ordernumber;
         $data['rma_number'] = $rmaId;
 
+        // Get the new ticket status
         $newStatusId = $this->getConfig($context->getSalesChannel()->getId(), 'ticketCreationStatus');
         $status = $this->getStatusById($ctx, $newStatusId);
         $hash = $this->createNewHash($rmaId);
         $link = $this->createLink($rmaId, $hash);
         $url = sprintf('<a target="_blank" href="%s" class="card-link">%s</a>', $link, $link);
 
+        // Create the ticket message data
         $ticketMessageData = [
             'customer_name' => $customername,
             'product_name' => $productName,
@@ -493,6 +562,7 @@ class RmaController extends StorefrontController
             'status_name' => $status ? $status->getNameExt() : ''
         ];
 
+        // Generate the ticket creation message
         $message = $this->getTicketCreationMessage($context->getContext(), $ticketMessageData);
 
         $freetextFiles = [];
@@ -506,6 +576,7 @@ class RmaController extends StorefrontController
                         $freetextFieldLabel = Utility::cleanString(sprintf('%s %d', $value['name'], $i + 1));
                         $value['label'] = $freetextFieldLabel;
 
+                        // Process the freetext form values
                         if ($request->get($freetextFieldName)) {
                             $fieldValue = $request->get($freetextFieldName);
                             if ($value['type'] === 'date') {
@@ -518,6 +589,7 @@ class RmaController extends StorefrontController
                             $freetextFormValues[] = $value;
                         }
 
+                        // Process the freetext file uploads
                         $file = sprintf('file_%s_%d', $value['name'], $i);
                         if ($request->files->get($file)) {
                             $file = $request->files->get($file);
@@ -542,6 +614,7 @@ class RmaController extends StorefrontController
                     $freetextFieldLabel = Utility::cleanString($value['name']);
                     $value['label'] = $freetextFieldLabel;
 
+                    // Process the freetext form values
                     if ($request->get($freetextFieldName)) {
                         $fieldValue = $request->get($freetextFieldName);
                         if ($value['type'] === 'date') {
@@ -554,6 +627,7 @@ class RmaController extends StorefrontController
                         $freetextFormValues[] = $value;
                     }
 
+                    // Process the freetext file uploads
                     $file = sprintf('file_%s_%d', $value['name'], 0);
                     if ($request->files->get($file)) {
                         $file = $request->files->get($file);
@@ -597,16 +671,20 @@ class RmaController extends StorefrontController
             'ticketSerialNumber' => (int)explode('-', $rmaId)[1]
         ];
 
+        // Process the freetext content and product serial numbers
         $freetextContent = $freetextFormValues;
-        if($freetextContent && \is_array($freetextContent)) {
-            $serialNumbersContent = \array_filter($freetextContent, static function($tc) {
+        if ($freetextContent && \is_array($freetextContent)) {
+            $serialNumbersContent = \array_filter($freetextContent, static function ($tc) {
                 return $tc['type'] === 'serial' && !empty($tc['value']);
             });
             $ticketData['productSerialNumbers'] = \array_column($serialNumbersContent, 'value');
         }
         $ticketData['ticketContent'] = $freetextContent;
 
+        // Upsert the ticket data
         $this->upsertTicket($ticketData, $ctx);
+
+        // Prepare history data
         $historyData = [
             'id' => Uuid::randomHex(),
             'ticketId' => $ticketId,
@@ -617,12 +695,15 @@ class RmaController extends StorefrontController
             'message' => $message
         ];
 
+        // Add the history entry
         $this->addHistory($historyData, $ctx);
+
+        // Get the ticket by RMA number
         $ticket = $this->getTicketByRmaNumber($ctx, $rmaId);
         $info = $this->getTicketInfo($ticket, $context->getContext());
 
+        // Send the internal new ticket email
         $mailTemplate = $this->getMailTemplate($context->getContext(), 'kit.rma.internal.new');
-
         if ($mailTemplate !== null) {
             $emailData = [
                 'rma' => $info,
@@ -642,6 +723,7 @@ class RmaController extends StorefrontController
         );
     }
 
+
     /**
      * @Route("/rma/ticket/comment", name="frontend.rma.ticket.comment", options={"seo"="false"}, methods={"POST"})
      */
@@ -650,39 +732,55 @@ class RmaController extends StorefrontController
         $mediaIds = [];
         $attachments = [];
 
+        // Get the RMA number from the request
         $rmaNumber = $request->get('id');
+
+        // Retrieve the ticket associated with the RMA number
         $ticket = $this->getTicketByRmaNumber($context->getContext(), $rmaNumber);
+
+        // If the ticket doesn't exist, show an error
         if (!$ticket) {
             return $this->showError(ErrorConstants::TICKET_NOT_FOUND);
         }
 
+        // Get the hash from the request
         $hash = $request->get('hash');
+
+        // Verify the hash against the ticket's hash
         if ($hash !== $ticket->getHash()) {
             return $this->showError(ErrorConstants::TICKET_ACCESS_DENIED);
         }
 
+        // Retrieve the uploaded files
         $files = $request->files->all();
+
+        // Process each file
         foreach ($files['files'] as $file) {
             if ($file) {
                 try {
+                    // Upload the file and store the resulting media information
                     $attachments[] = $media = $this->fileUploader->uploadFile($file, $context->getContext());
                     $mediaIds[] = $media['mediaId'];
                 } catch (Exception $e) {
+                    // If an exception occurs during file upload, redirect with an error
                     return $this->redirect($ticket->getLink() . '&error=1');
                 }
             }
         }
 
-        $newStatusId = $this->getConfig(
-            $context->getSalesChannel()->getId(),
-            'customerResponseStatus'
-        );
+        // Get the new status ID for customer response
+        $newStatusId = $this->getConfig($context->getSalesChannel()->getId(), 'customerResponseStatus');
 
+        // Get the new status based on the status ID
         $newStatus = $this->getStatusById($context->getContext(), $newStatusId);
+
+        // Get the previous status of the ticket
         $previousStatus = $ticket->getStatus();
+
+        // Get the comment from the request and convert newlines to <br> tags
         $comment = nl2br($request->get('answer'));
 
-        // External communication from customer
+        // Create a history entry for the external communication from the customer
         $historyData = [
             'id' => Uuid::randomHex(),
             'ticketId' => $ticket->getId(),
@@ -693,11 +791,10 @@ class RmaController extends StorefrontController
             'attachment' => $attachments,
             'message' => $comment
         ];
-
         $this->addHistory($historyData, $context->getContext());
 
+        // If the previous status and the new status are different, create an internal update history entry
         if ($previousStatus && $previousStatus->getId() !== $newStatus->getId()) {
-            // Internal update about customer reply
             $historyData = [
                 'id' => Uuid::randomHex(),
                 'ticketId' => $ticket->getId(),
@@ -711,7 +808,6 @@ class RmaController extends StorefrontController
                     $newStatus->getName()
                 )
             ];
-
             $ticket = $this->updateTicketStatus(
                 [
                     'id' => $ticket->getId(),
@@ -720,12 +816,13 @@ class RmaController extends StorefrontController
                 ],
                 $context->getContext()
             );
-
             $this->addHistory($historyData, $context->getContext());
         }
 
+        // Get the ticket information
         $info = $this->getTicketInfo($ticket, $context->getContext());
 
+        // Prepare email data
         $emailData = [
             'rma' => $info,
             'text' => $comment,
@@ -733,40 +830,53 @@ class RmaController extends StorefrontController
             'sender_name' => empty($info['customer_name']) ? 'KLARSICHT IT' : $info['customer_name'],
         ];
 
+        // Get the email template
         $mailTemplate = $this->getMailTemplate($context->getContext(), 'kit.rma.internal.answer');
+
+        // If the email template exists, send the email
         if ($mailTemplate !== null) {
             $this->sendMail($context->getContext(), $mailTemplate, $emailData);
         }
 
+        // Redirect the user to the ticket page
         return $this->redirect($info['link']);
     }
+
 
     /**
      * @Route("/rma/ticket/view", name="frontend.rma.ticket.view", options={"seo"="false"}, methods={"GET", "POST"})
      */
     public function ticketView(Request $request, SalesChannelContext $context): Response
     {
+        // Check if the plugin is active
         if (!$this->getConfig($context->getSalesChannel()->getId(), 'active')) {
             throw new RouteNotFoundException();
         }
 
+        // Check if the ticket ID is provided
         if (!$request->get('id')) {
             return $this->showError(ErrorConstants::ORDER_NOT_FOUND);
         }
 
+        // Retrieve the ticket based on the provided ID
         $id = $request->get('id');
         $ticket = $this->getTicketByRmaNumber($context->getContext(), $id);
+
+        // If the ticket doesn't exist, show an error
         if (!$ticket) {
             return $this->showError(ErrorConstants::ORDER_NOT_FOUND);
         }
 
+        // Check the hash against the ticket's hash
         $hash = $request->get('hash');
         if ($hash !== $ticket->getHash()) {
             return $this->showError(ErrorConstants::TICKET_ACCESS_DENIED);
         }
 
+        // Get the ticket information
         $info = $this->getTicketInfo($ticket, $context->getContext());
 
+        // Render the ticket view template
         return $this->renderStorefront(
             '@KitRma/rma/ticket.html.twig',
             [
@@ -782,21 +892,29 @@ class RmaController extends StorefrontController
      */
     public function previewPdf(Request $request, SalesChannelContext $context, string $rmaNumber): Response
     {
+        // Check if the customer is logged in
         $customer = $context->getCustomer();
         if (!$customer) {
             throw new CustomerNotLoggedInException();
         }
 
+        // Retrieve the ticket based on the provided RMA number
         $ticket = $this->getTicketByRmaNumber($context->getContext(), $rmaNumber);
+
+        // If the ticket doesn't exist, show an error
         if (!$ticket) {
             return $this->showError(ErrorConstants::TICKET_NOT_FOUND);
         }
 
+        // Check if the customer has access to the ticket
         if ($customer->getCustomerNumber() !== $ticket->getCustomer()->getCustomerNumber()) {
             return $this->showError(ErrorConstants::TICKET_ACCESS_DENIED);
         }
 
+        // Generate the PDF for the ticket
         $pdf = $this->generatePdfForTicket($context->getContext(), $ticket, true);
+
+        // If the PDF is generated successfully, create a response with the PDF content
         if ($pdf) {
             $response = new Response($pdf);
             $disposition = HeaderUtils::makeDisposition(
@@ -811,4 +929,5 @@ class RmaController extends StorefrontController
             return $response;
         }
     }
+
 }

@@ -85,11 +85,15 @@ class BirthdayReminderCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        // Create a new context using the SystemSource
         $context = new Context(new SystemSource());
+
+        // Calculate the date for birthdays (14 days from now)
         $ts = strtotime('+14 days');
         $date = date('m-d', $ts);
         $io->title('Looking for birthdays on: ' . date('d.M.Y', strtotime(date('Y') . '-' . $date)));
 
+        // SQL query to find customers with birthdays on the specified date
         $sql = <<<SQL
 SELECT LOWER(HEX(c.id)) AS `id` FROM `order` o
 INNER JOIN order_customer oc ON oc.order_id = o.id AND oc.order_version_id = o.version_id
@@ -98,14 +102,21 @@ WHERE `order_date_time` >= DATE_SUB(now(), INTERVAL 12 MONTH) AND c.birthday LIK
 GROUP BY oc.customer_id
 SQL;
 
+        // Fetch customer IDs from the database
         $ids = $this->connection->fetchAllAssociative($sql);
+
         if ($ids) {
+            // Get the customers by their IDs
             $users = $this->getCustomersByIds($ids, $context);
             $io->note('Found ' . $users->count() . ' customers');
             $data = [];
+
             /** @var CustomerEntity $user */
             foreach ($users as $user) {
+                // Get the shipping address of the customer
                 $shipping = $user->getDefaultShippingAddress();
+
+                // Add customer data to the data array
                 $data[] = [
                     'firstName' => $user->getFirstName(),
                     'lastName' => $user->getLastName(),
@@ -119,7 +130,10 @@ SQL;
                 ];
             }
 
+            // Get the mail template
             $template = $this->getMailTemplate($context);
+
+            // Send the mail with customer data
             $this->sendMail($template, ['users' => $data], $context);
 
             $io->success('Processed ' . count($data) . ' records');
@@ -129,6 +143,7 @@ SQL;
 
         return 0;
     }
+
 
     private function getCustomersByIds(array $ids, Context $context)
     {

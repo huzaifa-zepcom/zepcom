@@ -41,6 +41,7 @@ class Config3dController extends StorefrontController
         $cart = $this->cartService->getCart($context->getToken(), $context);
         $lineItemId = $request->get('lineItemId');
         $productId = $request->get('productId');
+
         if ($lineItemId) {
             $lineItem = $cart->getLineItems()->get($lineItemId);
             $productId = $lineItem ? $lineItem->getReferencedId() : $productId;
@@ -50,9 +51,11 @@ class Config3dController extends StorefrontController
             throw new ProductNotFoundException($productId);
         }
 
+        // Get the product ID from the request and load the product page so fill out necessary details in template
         $request->attributes->set('productId', $productId);
         $page = $this->productPageLoader->load($request, $context);
 
+        // If the customization URL exist in the product, means that product is eligible for the 3D configuration
         $customFields = $page->getProduct()->getCustomFields();
         $configured = $customFields['customization_config_url'] ?? null;
         if (!$configured) {
@@ -81,6 +84,7 @@ class Config3dController extends StorefrontController
         $lineItem->setPayloadValue('plugin3d_config', $configValue);
         $lineItem->setQuantity($first['quantity']);
 
+        // We set the adjusted config value in session to be used later on in cart processor.
         $request->getSession()->set($lineItem->getId(), $configValue);
 
         return $this->createActionResponse($request);

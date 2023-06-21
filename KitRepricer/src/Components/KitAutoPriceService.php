@@ -106,29 +106,30 @@ class KitAutoPriceService
         $this->testMode = $testMode;
         $this->log('', '=========================================================');
         $this->log($type, 'Executing in ' . ($testMode ? 'TEST' : 'LIVE') . ' mode');
-        $base = $this->getBaseRule($type);
-        $exceptions = $this->getExeptionRules($type);
 
-        if (empty($base) && empty($exceptions)) {
+        $base = $this->getBaseRule($type); // Get the base rule for the given type
+        $exceptions = $this->getExeptionRules($type); // Get the exception rules for the given type
+
+        if (empty($base) && empty($exceptions)) { // Check if there are no rules found
             $this->error($type, 'No rules found');
 
             return [];
         }
 
-        $businessHourStart = $this->getConfig('businessHourStart');
-        $businessHourEnd = $this->getConfig('businessHourEnd');
+        $businessHourStart = $this->getConfig('businessHourStart'); // Get the business hour start time from the configuration
+        $businessHourEnd = $this->getConfig('businessHourEnd'); // Get the business hour end time from the configuration
 
-        if (!$businessHourStart || !$businessHourEnd) {
+        if (!$businessHourStart || !$businessHourEnd) { // Check if business hours are not defined
             $this->error($type, 'Business hours are not defined in config');
 
             return [];
         }
 
-        $now = new Datetime();
-        $begintime = new DateTime($businessHourStart, $this->getTimezone());
-        $endtime = new DateTime($businessHourEnd, $this->getTimezone());
+        $now = new DateTime(); // Get the current time
+        $begintime = new DateTime($businessHourStart, $this->getTimezone()); // Create a DateTime object for the business hour start time
+        $endtime = new DateTime($businessHourEnd, $this->getTimezone()); // Create a DateTime object for the business hour end time
 
-        if ($now >= $begintime && $now <= $endtime) {
+        if ($now >= $begintime && $now <= $endtime) { // Check if the current time is within the business hour range
             $businessHour = 'Inside';
             $this->isInsideBusinessHour = true;
         } else {
@@ -146,13 +147,14 @@ class KitAutoPriceService
             )
         );
 
-        $affiliates = $this->getConfig('excludedAffiliates');
+        $affiliates = $this->getConfig('excludedAffiliates'); // Get the excluded affiliates from the configuration
         if (trim($affiliates)) {
-            $this->excludedAffiliates = explode(',', $affiliates);
+            $this->excludedAffiliates = explode(',', $affiliates); // Store the excluded affiliates in the $excludedAffiliates property
         }
 
-        return $this->processRules($type, $base, $exceptions, $exceptionIds);
+        return $this->processRules($type, $base, $exceptions, $exceptionIds); // Process the rules with the given parameters and return the result as an array
     }
+
 
     private function processRules(string $type, array $base, array $exceptions, $exceptionIds): array
     {

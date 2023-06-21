@@ -42,6 +42,7 @@ class KitInvoiceController extends StorefrontController
             if (isset($file['file_name'])) {
                 $response = new Response(file_get_contents($file['file_name']));
 
+                // Set headers for generating the file.
                 $disposition = HeaderUtils::makeDisposition(
                     HeaderUtils::DISPOSITION_INLINE,
                     $hash,
